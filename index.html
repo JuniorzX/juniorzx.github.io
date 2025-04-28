@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Order Search</title>
     <meta charset="utf-8">
@@ -17,11 +17,12 @@
         user-select: text;
       }
       .search-container {
+        position: relative;
         margin-bottom: 12px;
       }
       .search-box {
         width: 100%;
-        padding: 10px;
+        padding: 10px 30px 10px 10px;
         border: 1px solid #dee2e6;
         border-radius: 6px;
         font-size: 14px;
@@ -32,13 +33,22 @@
         outline: none;
         border-color: #009688;
       }
+      .clear-button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+        font-size: 18px;
+      }
       .search-button {
         margin-top: 8px;
         padding: 10px;
         background-color: #009688;
         color: white;
         border: none;
-        border-radius(',').join('') border-radius: 6px;
+        border-radius: 6px;
         cursor: pointer;
         width: 100%;
         font-size: 14px;
@@ -59,10 +69,17 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         margin-bottom: 16px;
         padding: 12px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.3s ease forwards;
+      }
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
       .order-card:hover {
-        transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
       .order-header {
@@ -71,16 +88,16 @@
         align-items: center;
         padding-bottom: 8px;
         border-bottom: 1px solid #e9ecef;
+        font-weight: 600;
       }
       .order-header.sale {
-        background-color: #e8f5e9; /* Light green for Sale Orders */
+        background-color: #e8f5e9;
       }
       .order-header.purchase {
-        background-color: #ffe5e5; /* Light red for Purchase Orders */
+        background-color: #ffe5e5;
       }
       .order-title {
         font-size: 16px;
-        font-weight: 600;
         color: #343a40;
       }
       .order-status {
@@ -147,24 +164,39 @@
         text-align: center;
         padding: 12px;
       }
+      .view-link {
+        grid-column: span 2;
+        text-align: right;
+        font-size: 12px;
+        margin-top: 8px;
+      }
+      .view-link a {
+        color: #009688;
+        text-decoration: none;
+      }
+      .view-link a:hover {
+        text-decoration: underline;
+      }
     </style>
   </head>
   <body>
     <div class="search-container">
-      <input id="OrderSearchBox" class="search-box" placeholder="Search Sale (S...) or Purchase (P...) Order" autocorrect="off" autocomplete="off" type="search" name="order">
-      <div id="OrderSearchButton" class="search-button">Search</div>
+      <input id="OrderSearchBox" class="search-box" placeholder="Search Sale (S...) or Purchase (P...) Order" autocorrect="off" autocomplete="off" type="search" name="order" aria-label="Search for sale or purchase order">
+      <span class="clear-button fa fa-times" onclick="clearSearch()" aria-label="Clear search"></span>
     </div>
+    <div id="OrderSearchButton" class="search-button">Search</div>
     <div id="OrderSearchResults" class="result-container"></div>
 
     <script>
-      // Global variables for DEAR Systems API keys
+      // Global variables
       let FIRST = "";
       let SECOND = "";
       let SALE_RAW_URL = "https://inventory.dearsystems.com/Sale#";
       let PURCHASE_RAW_URL = "https://inventory.dearsystems.com/Purchase#";
       let isSearching = false;
+      let searchTimeout;
 
-      // Key retrieval functions
+      // Key retrieval
       function getFirst() {
         Missive.fetchLabels('1ce404d3-6bad-4753-b29d-53daf66a7fc6').then((first) => {
           FIRST = first.name;
@@ -176,11 +208,18 @@
         });
       }
       function getBoth() {
-        if (FIRST.length < 1) { getFirst(); }
-        if (SECOND.length < 1) { getSecond(); }
+        if (!FIRST) { getFirst(); }
+        if (!SECOND) { getSecond(); }
       }
 
-      // Display sale order results
+      // Helper function for error handling
+      function handleError(cardElement, message) {
+        if (cardElement) {
+          cardElement.innerHTML = `<div class="order-header"><span class="order-title">Error</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="order-details"><div class="no-results">${message}</div></div>`;
+        }
+      }
+
+      // Display sale order
       function showSale(sale, elementID) {
         let invoices = sale.Invoices.map(inv => `
           <div class="invoice-item">
@@ -190,14 +229,15 @@
           </div>
         `).join('');
         
-        let toAppend = `
-          <div class="order-card">
+        let cardElement = document.getElementById(elementID);
+        if (cardElement) {
+          cardElement.innerHTML = `
             <div class="order-header sale">
               <div>
-                <span class="order-title">${sale.Order.SaleOrderNumber}</span>
+                <span class="order-title">Sale Order: ${sale.Order.SaleOrderNumber}</span>
                 <span class="order-status">(${sale.Status})</span>
               </div>
-              <span class="close-button fa fa-times" onclick="closeThis(this)"></span>
+              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
             </div>
             <div class="order-details">
               <div><b>Customer:</b> ${sale.Customer}</div>
@@ -205,79 +245,72 @@
               <div><b>Total:</b> ${sale.Order.Total} ${sale.CustomerCurrency}</div>
               <div><b>Quote:</b> ${sale.Quote.Status}</div>
               ${invoices ? `<div class="invoice-section">${invoices}</div>` : ''}
-            </div>
-          </div>`;
-        let cardElement = document.getElementById(elementID);
-        if (cardElement) {
-          cardElement.outerHTML = toAppend;
+              <div class="view-link"><a href="${SALE_RAW_URL}${sale.ID}" target="_blank">View in DEAR</a></div>
+            </div>`;
         }
       }
 
-      // Display purchase order results
+      // Display purchase order
       function showPurchase(purchase, elementID) {
-        let toAppend = `
-          <div class="order-card">
+        let cardElement = document.getElementById(elementID);
+        if (cardElement) {
+          cardElement.innerHTML = `
             <div class="order-header purchase">
               <div>
-                <span class="order-title">${purchase.OrderNumber}</span>
+                <span class="order-title">Purchase Order: ${purchase.OrderNumber}</span>
                 <span class="order-status">(${purchase.Status})</span>
               </div>
-              <span class="close-button fa fa-times" onclick="closeThis(this)"></span>
+              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
             </div>
             <div class="order-details">
               <div><b>Supplier:</b> ${purchase.Supplier}</div>
               <div><b>Order Status:</b> ${purchase.Order.Status}</div>
               <div><b>Total:</b> ${purchase.Order.Total} ${purchase.SupplierCurrency}</div>
               ${purchase.Type === "Advanced Purchase" ? `<div><b>Type:</b> ${purchase.Type}</div>` : ''}
-            </div>
-          </div>`;
-        let cardElement = document.getElementById(elementID);
-        if (cardElement) {
-          cardElement.outerHTML = toAppend;
+              <div class="view-link"><a href="${PURCHASE_RAW_URL}${purchase.ID}" target="_blank">View in DEAR</a></div>
+            </div>`;
         }
       }
 
-      // Close result card
+      // Close card
       function closeThis(th) {
         th.closest('.order-card').remove();
       }
 
-      // DEAR Systems API call to search sale
-      function DEAR_searchSale(toSearch) {
+      // Clear search input
+      function clearSearch() {
+        document.getElementById("OrderSearchBox").value = "";
+        document.getElementById("OrderSearchBox").focus();
+      }
+
+      // DEAR API call to search sale
+      function DEAR_searchSale(toSearch, randID) {
         let request = new XMLHttpRequest();
         request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/saleList?Search=' + toSearch);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('api-auth-accountid', FIRST);
         request.setRequestHeader('api-auth-applicationkey', SECOND);
-        const randID = Math.random().toString(16).substr(2, 8);
-        let toAppend = `<div id="${randID}" class="order-card"><div class="order-header sale"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="loading">Searching...</div></div></div>`;
-        document.getElementById("OrderSearchResults").innerHTML += toAppend;
         request.onreadystatechange = function () {
           if (this.readyState === 4) {
             isSearching = false;
+            let cardElement = document.getElementById(randID);
             if (this.status === 200) {
               let SO = JSON.parse(this.responseText);
               if (SO.SaleList.length > 0) {
                 let SOID = SO.SaleList[0].SaleID;
                 DEAR_getSale(SOID, randID);
               } else {
-                let cardElement = document.getElementById(randID);
-                if (cardElement) {
-                  cardElement.innerHTML = `<div class="order-header sale"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="no-results">No sale order found</div></div>`;
-                }
+                handleError(cardElement, "No sale order found");
               }
             } else {
-              let cardElement = document.getElementById(randID);
-              if (cardElement) {
-                cardElement.innerHTML = `<div class="order-header sale"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="no-results">Error fetching sale order</div></div>`;
-              }
+              handleError(cardElement, "Error fetching sale order");
             }
           }
         };
         request.send();
       }
 
-      // DEAR Systems API call to get sale details
+      // DEAR API call to get sale details
       function DEAR_getSale(Sale_ID, eleID) {
         let request = new XMLHttpRequest();
         request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/sale?ID=' + Sale_ID);
@@ -285,32 +318,30 @@
         request.setRequestHeader('api-auth-accountid', FIRST);
         request.setRequestHeader('api-auth-applicationkey', SECOND);
         request.onreadystatechange = function () {
-          if (this.readyState === 4 && this.status === 200) {
-            let Sale = JSON.parse(this.responseText);
-            showSale(Sale, eleID);
-          } else if (this.readyState === 4) {
+          if (this.readyState === 4) {
             let cardElement = document.getElementById(eleID);
-            if (cardElement) {
-              cardElement.innerHTML = `<div class="order-header sale"><span class="order-title">Error</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="no-results">Error fetching sale details</div></div>`;
+            if (this.status === 200) {
+              let Sale = JSON.parse(this.responseText);
+              showSale(Sale, eleID);
+            } else {
+              handleError(cardElement, "Error fetching sale details");
             }
           }
         };
         request.send();
       }
 
-      // DEAR Systems API call to search purchase
-      function DEAR_searchPurchase(toSearch) {
+      // DEAR API call to search purchase
+      function DEAR_searchPurchase(toSearch, randID) {
         let request = new XMLHttpRequest();
         request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/purchaseList?Search=' + toSearch);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('api-auth-accountid', FIRST);
         request.setRequestHeader('api-auth-applicationkey', SECOND);
-        const randID = Math.random().toString(16).substr(2, 8);
-        let toAppend = `<div id="${randID}" class="order-card"><div class="order-header purchase"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="loading">Searching...</div></div></div>`;
-        document.getElementById("OrderSearchResults").innerHTML += toAppend;
         request.onreadystatechange = function () {
           if (this.readyState === 4) {
             isSearching = false;
+            let cardElement = document.getElementById(randID);
             if (this.status === 200) {
               let PO = JSON.parse(this.responseText);
               if (PO.PurchaseList.length > 0) {
@@ -321,23 +352,17 @@
                   DEAR_getPurchase(POID, randID);
                 }
               } else {
-                let cardElement = document.getElementById(randID);
-                if (cardElement) {
-                  cardElement.innerHTML = `<div class="order-header purchase"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="no-results">No purchase order found</div></div>`;
-                }
+                handleError(cardElement, "No purchase order found");
               }
             } else {
-              let cardElement = document.getElementById(randID);
-              if (cardElement) {
-                cardElement.innerHTML = `<div class="order-header purchase"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="no-results">Error fetching purchase order</div></div>`;
-              }
+              handleError(cardElement, "Error fetching purchase order");
             }
           }
         };
         request.send();
       }
 
-      // DEAR Systems API call to get purchase details
+      // DEAR API call to get purchase details
       function DEAR_getPurchase(Purchase_ID, eleID) {
         let request = new XMLHttpRequest();
         request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/purchase?ID=' + Purchase_ID);
@@ -345,20 +370,20 @@
         request.setRequestHeader('api-auth-accountid', FIRST);
         request.setRequestHeader('api-auth-applicationkey', SECOND);
         request.onreadystatechange = function () {
-          if (this.readyState === 4 && this.status === 200) {
-            let Purchase = JSON.parse(this.responseText);
-            showPurchase(Purchase, eleID);
-          } else if (this.readyState === 4) {
+          if (this.readyState === 4) {
             let cardElement = document.getElementById(eleID);
-            if (cardElement) {
-              cardElement.innerHTML = `<div class="order-header purchase"><span class="order-title">Error</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="no-results">Error fetching purchase details</div></div>`;
+            if (this.status === 200) {
+              let Purchase = JSON.parse(this.responseText);
+              showPurchase(Purchase, eleID);
+            } else {
+              handleError(cardElement, "Error fetching purchase details");
             }
           }
         };
         request.send();
       }
 
-      // DEAR Systems API call to get advanced purchase details
+      // DEAR API call to get advanced purchase details
       function DEAR_getAdvancedPurchase(Purchase_ID, eleID) {
         let request = new XMLHttpRequest();
         request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/advanced-purchase?ID=' + Purchase_ID);
@@ -366,62 +391,69 @@
         request.setRequestHeader('api-auth-accountid', FIRST);
         request.setRequestHeader('api-auth-applicationkey', SECOND);
         request.onreadystatechange = function () {
-          if (this.readyState === 4 && this.status === 200) {
-            let Purchase = JSON.parse(this.responseText);
-            showPurchase(Purchase, eleID);
-          } else if (this.readyState === 4) {
+          if (this.readyState === 4) {
             let cardElement = document.getElementById(eleID);
-            if (cardElement) {
-              cardElement.innerHTML = `<div class="order-header purchase"><span class="order-title">Error</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="no-results">Error fetching advanced purchase details</div></div>`;
+            if (this.status === 200) {
+              let Purchase = JSON.parse(this.responseText);
+              showPurchase(Purchase, eleID);
+            } else {
+              handleError(cardElement, "Error fetching advanced purchase details");
             }
           }
         };
         request.send();
       }
 
-      // Determine whether to search sale or purchase based on first character
+      // Search function with debounce
       function searchOrder(toSearch) {
         if (isSearching) return;
         isSearching = true;
         toSearch = toSearch.trim().toUpperCase();
+        const randID = Math.random().toString(16).substr(2, 8);
+        const resultsContainer = document.getElementById("OrderSearchResults");
+        const cardHTML = `<div id="${randID}" class="order-card"><div class="order-header"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="order-details"><div class="loading">Searching...</div></div></div>`;
+        resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+        
         if (toSearch.startsWith('S')) {
-          DEAR_searchSale(toSearch);
+          DEAR_searchSale(toSearch, randID);
         } else if (toSearch.startsWith('P')) {
-          DEAR_searchPurchase(toSearch);
+          DEAR_searchPurchase(toSearch, randID);
         } else {
           isSearching = false;
-          let randID = Math.random().toString(16).substr(2, 8);
-          document.getElementById("OrderSearchResults").innerHTML += `<div id="${randID}" class="order-card"><div class="order-header"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="order-details"><div class="no-results">Please start with 'S' for Sale or 'P' for Purchase</div></div></div>`;
+          handleError(document.getElementById(randID), "Please start with 'S' for Sale or 'P' for Purchase");
         }
       }
 
-      // Event listener for conversation change to fetch keys
+      // Debounce function
+      function debounce(func, wait) {
+        return function(...args) {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+
+      // Event listeners
       Missive.on('change:conversations', (ids) => {
         Missive.fetchConversations(ids).then((conversations) => {
-          if (conversations.length !== 1) {
-            return;
-          }
+          if (conversations.length !== 1) return;
           getBoth();
         });
       });
 
-      // Event listener for search button
       document.getElementById("OrderSearchButton").onclick = function() {
-        let searchValue = document.getElementById("OrderSearchBox").value;
-        if (searchValue) {
-          searchOrder(searchValue);
-        }
+        const searchValue = document.getElementById("OrderSearchBox").value;
+        if (searchValue) searchOrder(searchValue);
       };
 
-      // Event listener for Enter key in search box
-      document.getElementById("OrderSearchBox").addEventListener('keypress', function(e) {
+      document.getElementById("OrderSearchBox").addEventListener('keypress', debounce(function(e) {
         if (e.key === 'Enter') {
-          let searchValue = this.value;
-          if (searchValue) {
-            searchOrder(searchValue);
-          }
+          const searchValue = this.value;
+          if (searchValue) searchOrder(searchValue);
         }
-      });
+      }, 300));
+
+      // Autofocus search input
+      document.getElementById("OrderSearchBox").focus();
     </script>
   </body>
 </html>
