@@ -16,6 +16,17 @@
         background-color: #f8f9fa;
         user-select: text;
       }
+      #subjectDisplay {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        font-weight: 600;
+        color: #343a40;
+        word-break: break-word;
+      }
       #orderButtons {
         margin-bottom: 10px;
       }
@@ -233,13 +244,16 @@
       }
       #popupContent {
         margin-top: 20px;
+        color: #000;
       }
       #popupContent details {
         margin-bottom: 10px;
+        color: #000;
       }
       #popupContent summary {
         cursor: pointer;
         font-weight: bold;
+        color: #000;
       }
       #popupContent pre {
         margin: 0;
@@ -247,6 +261,13 @@
         white-space: pre-wrap;
         font-family: monospace;
         font-size: 12px;
+        color: #000;
+      }
+      #popupContent div {
+        color: #000;
+      }
+      #popupContent strong {
+        color: #000;
       }
       .attachments-button {
         cursor: pointer;
@@ -304,6 +325,7 @@
     </style>
   </head>
   <body>
+    <div id="subjectDisplay"></div>
     <div id="orderButtons"></div>
     <div class="search-container">
       <input id="OrderSearchBox" class="search-box" placeholder="Search Sale (S...) or Purchase (P...) Order" autocorrect="off" autocomplete="off" type="search" name="order" aria-label="Search for sale or purchase order">
@@ -649,6 +671,11 @@
           if (conversations.length !== 1) return;
           getBoth();
           const subject = conversations[0].subject;
+          
+          // Display the subject
+          const subjectDisplayDiv = document.getElementById('subjectDisplay');
+          subjectDisplayDiv.textContent = subject;
+          
           const orderPattern = /[SP]\d+G/g;
           const orders = subject.match(orderPattern) || [];
           const orderButtonsDiv = document.getElementById('orderButtons');
