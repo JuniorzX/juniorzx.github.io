@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-
       <title>Missive</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1,user-scalable=no,viewport-fit=cover">
@@ -14,438 +12,340 @@
       <link rel="apple-touch-icon" type="image/x-icon" href="https://dx9t285h889zc.cloudfront.net/dist/images/missive-apple-touch-icon-d5d0cb3a4417ed837614da93b78ab15c.png">
       <link rel="mask-icon" href="https://dx9t285h889zc.cloudfront.net/dist/images/missive-icon-f93a53ffb5e67fb2d74f20e7f71d5bd2.svg" color="#222427">
       <link rel="manifest" href="/manifest.json">
-      <script async src="https://dx9t285h889zc.cloudfront.net/dist/preboot-6f15f25ebaea1dbab510.js" integrity="sha512-wsr+/GXcNONfMr6Z+T1J/K3iTxAU4wJAOOdlD4nRWM1/TQofz9pMTUMoayc8tHiACcyUU+v9xFAmSU4Mhsl9TQ==" crossorigin="anonymous"></script>
+      <script async src="https://dx9t285h889zc.cloudfront.net/dist/preboot-6f15f25ebaea1dbab510.js" integrity="sha512-wsr+/GXcNONfMr6Z+T1J/K3iTxAU4wJAOOdlD4nRWM1/TQofz9pMTUMoayc8tHiACcyUU+v9xFAmSU4Mhsl9TQ==" crossorigin="anonymous"></scriptpony>
       <link rel="stylesheet" href="https://dx9t285h889zc.cloudfront.net/dist/libraries-401dd1f41aa163d3e6d3.css" integrity="sha512-4TQijZr3Z5vHdFXDgVn7eGrsrMForJCmWE+NYgIJyE95AxfBM0mnjzTkxcldlu6ckNywHIiIHbE2GfF1CPS4qw==" crossorigin="anonymous">
       <link rel="stylesheet" href="https://dx9t285h889zc.cloudfront.net/dist/application-1c1cca38f63c8ef8aa00.css" integrity="sha512-AfIm90uUNgvQqILsjDt1+vVIzQgF1MEot9KaqhvJNvgQ7Vfu4hDFkROd/lgLV/igPSRKSBzmMytb6LXFPGRWvA==" crossorigin="anonymous">
-
-
-    <link href="https://integrations.missiveapp.com/missive.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://integrations.missiveapp.com/missive.js"></script>
-
-    <style>
-
-
-#ThreeBoxItemSearchResult {
-  border: 1px dotted #ccc;
-  padding: 3px;
-  height: 10rem;
-    overflow: auto;
-    white-space: nowrap;
-	display: none;
-}
-#ThreeBoxItemSearchResult ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-#ThreeBoxItemSearchResult ul li {
-  padding: 5px 0;
-}
-#ThreeBoxItemSearchResult ul li:hover {
-  background: #eee;
-}
-.attribute {
-  display: flex;
-  flex: 0 0 auto;
-  width: 95%;
-  height: 100%;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin: 5px;
-}
-.attributeInput {
-  flex: 1;
-  height: 100%;
-  color: black;
-  max-width: 10em;
-  
-}
-.attributeSelect{
-  flex: 1;
-    height: 100%;
-    color: black;
-    width: inherit;
-}
-.attributeLabel{
-  margin-right: 5px;
-  
-}
-.checkboxx {
-  -webkit-appearance: checkbox;
-  -moz-appearance:    checkbox;
-  appearance:         checkbox;
-}
-.historyButton{
-  padding: 5px;
-    margin-top: 5px;
-    background-color: #7c4c08;
-    color: white;
-    text-align: center;
-}
-.historyPerCustomer
-{
-  padding: 5px;
-}
-
-    </style>
+      <link href="https://integrations.missiveapp.com/missive.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <script src="https://integrations.missiveapp.com/missive.js"></script>
+      <style>
+        #ThreeBoxItemSearchResult {
+          border: 1px dotted #ccc;
+          padding: 3px;
+          height: 10rem;
+          overflow: auto;
+          white-space: nowrap;
+          display: none;
+        }
+        #ThreeBoxItemSearchResult ul {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+        }
+        #ThreeBoxItemSearchResult ul li {
+          padding: 5px 0;
+        }
+        #ThreeBoxItemSearchResult ul li:hover {
+          background: #eee;
+        }
+        .attribute {
+          display: flex;
+          flex: 0 0 auto;
+          width: 95%;
+          height: 100%;
+          align-items: flex-start;
+          justify-content: flex-start;
+          margin: 5px;
+        }
+        .attributeInput {
+          flex: 1;
+          height: 100%;
+          color: black;
+          max-width: 10em;
+        }
+        .attributeSelect {
+          flex: 1;
+          height: 100%;
+          color: black;
+          width: inherit;
+        }
+        .attributeLabel {
+          margin-right: 5px;
+        }
+        .checkboxx {
+          -webkit-appearance: checkbox;
+          -moz-appearance: checkbox;
+          appearance: checkbox;
+        }
+        .historyButton {
+          padding: 5px;
+          margin-top: 5px;
+          background-color: #7c4c08;
+          color: white;
+          text-align: center;
+        }
+        .historyPerCustomer {
+          padding: 5px;
+        }
+        .so-item, .po-item {
+          display: inline-block;
+          padding: 5px 10px;
+          margin: 2px;
+          cursor: pointer;
+          border-radius: 4px;
+          font-size: 0.9em;
+        }
+        .so-item {
+          background-color: rgba(0, 158, 97, 0.1);
+          border: 1px solid rgba(0, 158, 97, 0.15);
+          color: rgba(0, 158, 97, 0.85);
+        }
+        .po-item {
+          background-color: rgba(204, 0, 0, 0.1);
+          border: 1px solid rgba(204, 0, 0, 0.15);
+          color: rgba(204, 0, 0, 0.85);
+        }
+        .so-item:hover, .po-item:hover {
+          opacity: 0.8;
+        }
+      </style>
   </head>
-  
   <body>
-    
-      <div id="PADDINGBLOCK" class="padding-block" style="user-select: text;">
-
-        <div id="OneBoxSubject" class="missive ellipsis text-600 padding-xsmall">B330744 GROUPTEK- Pick-Up request [P1515G BVI] Return of goods) (Status-Reminder)TOP URGENT</div>
-
-        <div id="TwoBoxSOPO" class="missive padding-xsmall text-600 missive-columns missive-flex-basis-auto" style="min-width: 2.1em;background-color: var(--background-color)">
-          <span id="SOButton" class="label-token no-wrap missive-columns-middle missive-columns-center" style="user-select: text; background-color: rgba(0, 158, 97, 0.1);border-color: rgba(0, 158, 97, 0.15);color: rgba(0, 158, 97, 0.85);">
-            <span id="SONumber" class="padding-small no-wrap">SO:- - </span>
-          </span>
-          <span id="POButton" class="missive label-token no-wrap missive-columns-middle missive-columns-center" style="user-select: text; background-color: rgba(204, 0, 0, 0.1); border-color: rgba(204, 0, 0, 0.15); color: rgba(204, 0, 0, 0.85);">
-            <span id="PONumber" class="padding-small no-wrap">PO:- - </span>
-          </span>
-        </div>
-  
-        <div id="ThreeBoxItemSearch" class="columns-vertical margin-xsmall">
-          <div class="columns">
-            <div class="missive column-grow columns">
-              <input id="ThreeBoxItemSearchBox"  placeholder="Search Item" autocorrect="off" autocomplete="off" class="input column-grow margin-xsmall ellipsis margin-right-xsmall" type="search" name="itemName" onkeyup="DEAR_getItemsList(this.value)" onfocus="DEAR_getItemsList(this.value)" onblur="hideThreeBoxItemSearchResult()">
-            </div>
-            <div id="ThreeBoxItemFindButton" class="button ellipsis">Find</div>
-          </div>  
-          <div id="ThreeBoxItemSearchResult" class="column"></div>
-        </div>
-
+    <div id="PADDINGBLOCK" class="padding-block" style="user-select: text;">
+      <div id="OneBoxSubject" class="missive ellipsis text-600 padding-xsmall">B330744 GROUPTEK- Pick-Up request [P1515G BVI] Return of goods) (Status-Reminder)TOP URGENT</div>
+      <div id="TwoBoxSOPO" class="missive padding-xsmall text-600 missive-columns missive-flex-basis-auto" style="min-width: 2.1em;background-color: var(--background-color)">
+        <span id="SOButton" class="label-token no-wrap missive-columns-middle missive-columns-center" style="user-select: text;">
+          <span id="SONumber" class="padding-small no-wrap">SO:- - </span>
+        </span>
+        <span id="POButton" class="label-token no-wrap missive-columns-middle missive-columns-center" style="user-select: text;">
+          <span id="PONumber" class="padding-small no-wrap">PO:- - </span>
+        </span>
+      </div>
+      <div id="ThreeBoxItemSearch" class="columns-vertical margin-xsmall">
+        <div class="columns">
+          <div class="missive column-grow columns">
+            <input id="ThreeBoxItemSearchBox" placeholder="Search Item" autocorrect="off" autocomplete="off" class="input column-grow margin-xsmall ellipsis margin-right-xsmall" type="search" name="itemName" onkeyup="DEAR_getItemsList(this.value)" onfocus="DEAR_getItemsList(this.value)" onblur="hideThreeBoxItemSearchResult()">
+          </div>
+          <div id="ThreeBoxItemFindButton" class="button ellipsis">Find</div>
+        </div>  
+        <div id="ThreeBoxItemSearchResult" class="column"></div>
+      </div>
       <div class="missive-columns-vertical" style="height: 85vh;overflow: auto; user-select: text;">
         <div id="FourUserData" class="columns-vertical margin-xsmall"></div>
       </div> 
     </div>
-
     <script>
       // Optomize for V2.1 then Deep Optomize for V2.2, Add tools in V3.0 then Loop || V3.1>V3.2>V4.0>V4.1>V4.2>V5.0............
-
       // Globals
       let SCRIPT_VERSION = "Integration V2.0";
       let FIRST = "";
-		  let SECOND = "";
+      let SECOND = "";
       let THIRD = "";
       let SALE_RAW_URL = "https://inventory.dearsystems.com/Sale#";
-		  let PURCHASE_RAW_URL = "https://inventory.dearsystems.com/Purchase#";
+      let PURCHASE_RAW_URL = "https://inventory.dearsystems.com/Purchase#";
       let PURCHASE_ATTRIBUTES_LIST = "";
       let SALE_ATTRIBUTES_LIST = "";
-
       // Resets
-      function resetSONumber(){document.getElementById("SONumber").innerHTML =  "SO:- ";}
-      function resetPONumber(){document.getElementById("PONumber").innerHTML =  "PO:- ";}
-      function resetSubject(){document.getElementById("OneBoxSubject").innerHTML =  SCRIPT_VERSION;}
-      function resetFields(){resetSONumber();resetPONumber();resetSubject();}
-
-      // Auto So Po Helpers Done
-      function findSO(subj)
-      {
+      function resetSONumber() { document.getElementById("SONumber").innerHTML = "SO:- "; }
+      function resetPONumber() { document.getElementById("PONumber").innerHTML = "PO:- "; }
+      function resetSubject() { document.getElementById("OneBoxSubject").innerHTML = SCRIPT_VERSION; }
+      function resetFields() { resetSONumber(); resetPONumber(); resetSubject(); }
+      // Auto SO/PO Helpers
+      function findSO(subj) {
         let pattern = /[S]\d\d*[G]/gi;
         let result = subj.match(pattern);
-        if (result == null)
-          {
-            resetSONumber();
-            return
-          }
-          document.getElementById("SONumber").innerHTML = result;
+        if (result == null) {
+          resetSONumber();
+          return;
+        }
+        let html = result.map(so => `<span class="so-item" onclick="DEAR_searchSale('${so}')">${so}</span>`).join(' ');
+        document.getElementById("SONumber").innerHTML = html;
       }
-      function findPO(subj)
-      {
+      function findPO(subj) {
         let pattern = /[P]\d\d*[G]/gi;
         let result = subj.match(pattern);
-        if (result == null)
-          {
-            resetPONumber();
-            return
-          }
-          document.getElementById("PONumber").innerHTML = result;
+        if (result == null) {
+          resetPONumber();
+          return;
+        }
+        let html = result.map(po => `<span class="po-item" onclick="DEAR_searchPurchase('${po}')">${po}</span>`).join(' ');
+        document.getElementById("PONumber").innerHTML = html;
       }
-      function autoFindSOPO(convo)
-      {
+      function autoFindSOPO(convo) {
         let subject = convo.subject;
         findSO(subject);
         findPO(subject);
       }
-      
-      // Result Box Controller Done
-      function showThreeBoxItemSearchResult(){document.getElementById("ThreeBoxItemSearchResult").style.display = "block";}
-      function hideThreeBoxItemSearchResult(){document.getElementById("ThreeBoxItemSearchResult").style.display = "none";}
-      function searchingThreeBoxItemSearchResult(what){document.getElementById("ThreeBoxItemSearchResult").innerHTML = "Searching... " + what;}
-      function setThreeBoxItemSearchResult(toSet){document.getElementById("ThreeBoxItemSearchResult").innerHTML = toSet;}
-
-      function itemThis(th){hideThreeBoxItemSearchResult();document.getElementById("ThreeBoxItemSearchBox").value = th.innerHTML;}
-      function closeThis(th){th.parentElement.parentElement.style.display = 'none';}
-
-      function popProduct(e)
-      {
-        
-            let {title: t, message: s, note: n} = e;
-            t || (t = "Oops, something went wrong!"),
-            s || (s = ""),
-            n || (n = "You may want to try again later or refresh the integration.");
-            let i = document.createElement("div");
-            i.className = "alert columns-middle columns-center";
-            let r = "";
-            t && (r += `<div class="row text-large">${t}</div>`),
-            s && (r += `<div class="row text-c">${s}</div>`),
-            n && (r += `<div class="row text-c text-small">${n}</div>`),
-            i.innerHTML = `\n      <div class="alert-box align-center">\n        <div class="padding-large">\n          ${r}\n        </div>\n        <div class="alert-buttons columns">\n          <span class="alert-button column-grow padding" onClick="Missive.reload()">Refresh</span>\n          <span class="alert-button alert-button--active column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Got it</span>\n        </div>\n      </div>\n    `,
-            document.body.appendChild(i)
+      // Result Box Controller
+      function showThreeBoxItemSearchResult() { document.getElementById("ThreeBoxItemSearchResult").style.display = "block"; }
+      function hideThreeBoxItemSearchResult() { document.getElementById("ThreeBoxItemSearchResult").style.display = "none"; }
+      function searchingThreeBoxItemSearchResult(what) { document.getElementById("ThreeBoxItemSearchResult").innerHTML = "Searching... " + what; }
+      function setThreeBoxItemSearchResult(toSet) { document.getElementById("ThreeBoxItemSearchResult").innerHTML = toSet; }
+      function itemThis(th) { hideThreeBoxItemSearchResult(); document.getElementById("ThreeBoxItemSearchBox").value = th.innerHTML; }
+      function closeThis(th) { th.parentElement.parentElement.style.display = 'none'; }
+      function popProduct(e) {
+        let {title: t, message: s, note: n} = e;
+        t || (t = "Oops, something went wrong!");
+        s || (s = "");
+        n || (n = "You may want to try again later or refresh the integration.");
+        let i = document.createElement("div");
+        i.className = "alert columns-middle columns-center";
+        let r = "";
+        t && (r += `<div class="row text-large">${t}</div>`);
+        s && (r += `<div class="row text-c">${s}</div>`);
+        n && (r += `<div class="row text-c text-small">${n}</div>`);
+        i.innerHTML = `\n      <div class="alert-box align-center">\n        <div class="padding-large">\n          ${r}\n        </div>\n        <div class="alert-buttons columns">\n          <span class="alert-button column-grow padding" onClick="Missive.reload()">Refresh</span>\n          <span class="alert-button alert-button--active column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Got it</span>\n        </div>\n      </div>\n    `;
+        document.body.appendChild(i);
       }
-      function popDataPurchaseAttachments(e)
-      {
-            let i = document.createElement("div");
-            i.className = "alert columns-middle columns-center";
-            i.style = "display: flex;align-items: flex-start;overflow: scroll;margin: 1e;"
-            i.innerHTML = `\n      <div style="margin: 1em;" class="alert-box align-center">\n        <div class="padding-large">\n          ${e.getAttribute("data-purchase-attachments")}\n        </div>\n        <div class="alert-buttons columns">\n    <span class="alert-button alert-button--active column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Got it</span>\n        </div>\n      </div>\n    `,
-            document.body.appendChild(i)
+      function popDataPurchaseAttachments(e) {
+        let i = document.createElement("div");
+        i.className = "alert columns-middle columns-center";
+        i.style = "display: flex;align-items: flex-start;overflow: scroll;margin: 1em;";
+        i.innerHTML = `\n      <div style="margin: 1em;" class="alert-box align-center">\n        <div class="padding-large">\n          ${e.getAttribute("data-purchase-attachments")}\n        </div>\n        <div class="alert-buttons columns">\n    <span class="alert-button alert-button--active column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Got it</span>\n        </div>\n      </div>\n    `;
+        document.body.appendChild(i);
       }
-      function popDataSaleAttachments(e)
-      {
-            let i = document.createElement("div");
-            i.className = "alert columns-middle columns-center";
-            i.style = "display: flex;align-items: flex-start;overflow: scroll;margin: 1e;"
-            i.innerHTML = `\n      <div style="margin: 1em;" class="alert-box align-center">\n        <div class="padding-large">\n          ${e.getAttribute("data-sale-attachments")}\n        </div>\n        <div class="alert-buttons columns">\n    <span class="alert-button alert-button--active column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Got it</span>\n        </div>\n      </div>\n    `,
-            document.body.appendChild(i)
+      function popDataSaleAttachments(e) {
+        let i = document.createElement("div");
+        i.className = "alert columns-middle columns-center";
+        i.style = "display: flex;align-items: flex-start;overflow: scroll;margin: 1em;";
+        i.innerHTML = `\n      <div style="margin: 1em;" class="alert-box align-center">\n        <div class="padding-large">\n          ${e.getAttribute("data-sale-attachments")}\n        </div>\n        <div class="alert-buttons columns">\n    <span class="alert-button alert-button--active column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Got it</span>\n        </div>\n      </div>\n    `;
+        document.body.appendChild(i);
       }
-      
       // Purchase Attributes
-      function popPurchaseAttributes(e) // Called by attribute button in showpurchase() Create a popup and call dear for recent attributes
-      {
+      function popPurchaseAttributes(e) {
         const randID = Math.random().toString(16).substr(2, 8);
         let i = document.createElement("div");
         i.className = "alert columns-middle columns-center";
         let r = "Getting Purchase Attributes...";
         i.innerHTML = `\n      <div class="alert-box align-center">\n        <div id=${randID} class="padding-large">\n          ${r}\n        </div>\n        <div class="alert-buttons columns">\n          <span class="alert-button column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Cancel</span>\n          <span class="alert-button alert-button--active column-grow padding" onClick="putPurchaseAttributeHelper('${e.getAttribute("data-purchase-id")}','${randID}')">Save</span>\n        </div>\n      </div>\n    `;
-        //i.innerHTML = `\n      <div class="alert-box align-center">\n        <div id=${randID} class="padding-large">\n          ${r}\n        </div>\n        <div class="alert-buttons columns">\n          <span class="alert-button column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Cancel</span>\n          \n        </div>\n      </div>\n    `;
         document.body.appendChild(i);
-        if(e.getAttribute("data-purchase-type") == "Advanced Purchase")
-        {
-          DEAR_getAdvancedPurchaseAttributes(randID,e.getAttribute("data-purchase-id"));
-        }
-        else
-        {
-          DEAR_getPurchaseAttributes(randID,e.getAttribute("data-purchase-id"));
+        if (e.getAttribute("data-purchase-type") == "Advanced Purchase") {
+          DEAR_getAdvancedPurchaseAttributes(randID, e.getAttribute("data-purchase-id"));
+        } else {
+          DEAR_getPurchaseAttributes(randID, e.getAttribute("data-purchase-id"));
         }
         console.log(e.getAttribute("data-purchase-id"));
-
-        
       }
-      function popPurchaseAttributesExtra(eleID, pr)
-      {
+      function popPurchaseAttributesExtra(eleID, pr) {
         let allAttributes = "";
-        
-        for (let i = 0; i<PURCHASE_ATTRIBUTES_LIST.length; i++)
-        {
-          let input_id = pr.ID + "_" + ("AdditionalAttribute" +(i+1));
+        for (let i = 0; i < PURCHASE_ATTRIBUTES_LIST.length; i++) {
+          let input_id = pr.ID + "_" + ("AdditionalAttribute" + (i+1));
           allAttributes += `<div class="attribute"><label class="ellipsis attributeLabel">${PURCHASE_ATTRIBUTES_LIST[i].Name} </label>`;
-          if(PURCHASE_ATTRIBUTES_LIST[i].Type == "Text")
-          {
-            if(pr.AdditionalAttributes[("AdditionalAttribute" +(i+1))] == null)
-            {
+          if (PURCHASE_ATTRIBUTES_LIST[i].Type == "Text") {
+            if (pr.AdditionalAttributes[("AdditionalAttribute" + (i+1))] == null) {
               allAttributes += `<input type="text" value='' id='${input_id}' class="attributeInput input"/>`;
+            } else {
+              allAttributes += `<input type="text" value='${pr.AdditionalAttributes[("AdditionalAttribute" + (i+1))]}' id='${input_id}' class="attributeInput input"/>`;
             }
-            else
-            {
-              allAttributes += `<input type="text" value='${pr.AdditionalAttributes[("AdditionalAttribute" +(i+1))]}' id='${input_id}' class="attributeInput input"/>`;
-            }
-            
-          }
-          else if (PURCHASE_ATTRIBUTES_LIST[i].Type == "List")
-          {
-            allAttributes += `<select id='${input_id}' class="attributeSelect" name='${PURCHASE_ATTRIBUTES_LIST[i].Name}'>`
+          } else if (PURCHASE_ATTRIBUTES_LIST[i].Type == "List") {
+            allAttributes += `<select id='${input_id}' class="attributeSelect" name='${PURCHASE_ATTRIBUTES_LIST[i].Name}'>`;
             const myArray = PURCHASE_ATTRIBUTES_LIST[i].Values.split(",");
-            let currentValue = pr.AdditionalAttributes[("AdditionalAttribute" +(i+1))]
+            let currentValue = pr.AdditionalAttributes[("AdditionalAttribute" + (i+1))];
             myArray.push("");
-            if(currentValue == null)
-              {
-                currentValue = "";
-              }
+            if (currentValue == null) {
+              currentValue = "";
+            }
             let found = false;
-            for (let i = 0; i<myArray.length; i++)
-            {
-              if(myArray[i] == currentValue)
-              {
-                allAttributes+= `<option selected value='${myArray[i]}'>${myArray[i]}</option>`
+            for (let i = 0; i < myArray.length; i++) {
+              if (myArray[i] == currentValue) {
+                allAttributes += `<option selected value='${myArray[i]}'>${myArray[i]}</option>`;
                 found = true;
+              } else {
+                allAttributes += `<option value='${myArray[i]}'>${myArray[i]}</option>`;
               }
-              else{
-                allAttributes+= `<option value='${myArray[i]}'>${myArray[i]}</option>`
-              }
-
-              
             }
-            if(found==false)
-              {
-                allAttributes+= `<option selected value='${currentValue}'>${currentValue}</option>`
-              }
-            allAttributes += `</select>`
-          }
-          else if(PURCHASE_ATTRIBUTES_LIST[i].Type == "Checkbox")
-          {
-            if(pr.AdditionalAttributes[("AdditionalAttribute" +(i+1))] == "true")
-            {
-              allAttributes+= `<input checked type="checkbox" id='${input_id}' class="attributeInput input">`
+            if (!found) {
+              allAttributes += `<option selected value='${currentValue}'>${currentValue}</option>`;
             }
-            else
-            {
-              allAttributes+= `<input type="checkbox" id='${input_id}' class="attributeInput input">`
+            allAttributes += `</select>`;
+          } else if (PURCHASE_ATTRIBUTES_LIST[i].Type == "Checkbox") {
+            if (pr.AdditionalAttributes[("AdditionalAttribute" + (i+1))] == "true") {
+              allAttributes += `<input checked type="checkbox" id='${input_id}' class="attributeInput input">`;
+            } else {
+              allAttributes += `<input type="checkbox" id='${input_id}' class="attributeInput input">`;
             }
-            
           }
           allAttributes += `</div>`;
         }
-        
-        document.getElementById(eleID).innerHTML = allAttributes
+        document.getElementById(eleID).innerHTML = allAttributes;
       }
-      // PURCHASE ToDo Real Put Request !!!!!!!!!! Maybe Done (ToCheck intensive)
-      function putPurchaseAttributeHelper(purchase_id, eleID)
-      {
+      function putPurchaseAttributeHelper(purchase_id, eleID) {
         document.getElementById(eleID).style.backgroundColor = 'red';
         let purchase_body = {"ID": purchase_id, "AdditionalAttributes": {}};
-      
-        // values to get as (purchase_id)+(_)+(AdditionalAttribute#)
-        for(let i = 1; i <= 10; i++)
-        {
-          purchase_body.AdditionalAttributes[("AdditionalAttribute" + i)] = document.getElementById(purchase_id + "_" + ("AdditionalAttribute" + i)).value;
+        for (let i = 1; i <= 10; i++) {
+          let elem = document.getElementById(purchase_id + "_" + ("AdditionalAttribute" + i));
+          if (elem.type === "checkbox") {
+            purchase_body.AdditionalAttributes[("AdditionalAttribute" + i)] = elem.checked ? "true" : "false";
+          } else {
+            purchase_body.AdditionalAttributes[("AdditionalAttribute" + i)] = elem.value;
+          }
         }
         console.log(purchase_body);
-        DEAR_GET2PUTPurchaseAttributes(purchase_body,eleID)
-        //DEAR_putPurchaseAttributes(purchase_body);
+        DEAR_GET2PUTPurchaseAttributes(purchase_body, eleID);
       }
-
       // Sale Attributes
-      function popSaleAttributes(e)
-      {
+      function popSaleAttributes(e) {
         const randID = Math.random().toString(16).substr(2, 8);
         let i = document.createElement("div");
         i.className = "alert columns-middle columns-center";
         let r = "Getting Sale Attributes...";
-        //i.innerHTML = `\n      <div class="alert-box align-center">\n        <div id=${randID} class="padding-large">\n          ${r}\n        </div>\n        <div class="alert-buttons columns">\n          <span class="alert-button column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Cancel</span>\n          <span class="alert-button alert-button--active column-grow padding" onClick="putSaleAttributeHelper('${e.getAttribute("data-sale-id")}', '${randID}')">Save</span>\n        </div>\n      </div>\n    `;
-        i.innerHTML = `\n      <div class="alert-box align-center">\n        <div id=${randID} class="padding-large">\n          ${r}\n        </div>\n        <div class="alert-buttons columns">\n          <span class="alert-button column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Cancel</span>\n          \n        </div>\n      </div>\n    `;
+        i.innerHTML = `\n      <div class="alert-box align-center">\n        <div id=${randID} class="padding-large">\n          ${r}\n        </div>\n        <div class="alert-buttons columns">\n          <span class="alert-button column-grow padding" onClick="this.parentElement.parentElement.parentElement.remove()">Cancel</span>\n          <span class="alert-button alert-button--active column-grow padding" onClick="putSaleAttributeHelper('${e.getAttribute("data-sale-id")}','${randID}')">Save</span>\n        </div>\n      </div>\n    `;
         document.body.appendChild(i);
-
         console.log(e.getAttribute("data-sale-id"));
-
-        DEAR_getSaleAttributes(randID,e.getAttribute("data-sale-id"));
+        DEAR_getSaleAttributes(randID, e.getAttribute("data-sale-id"));
       }
-      function popSaleAttributesExtra(eleID, sl)
-      {
+      function popSaleAttributesExtra(eleID, sl) {
         let allAttributes = "";
-        
-        for (let i = 0; i<SALE_ATTRIBUTES_LIST.length; i++)
-        {
-          let input_id = sl.ID + "_" + ("AdditionalAttribute" +(i+1));
+        for (let i = 0; i < SALE_ATTRIBUTES_LIST.length; i++) {
+          let input_id = sl.ID + "_" + ("AdditionalAttribute" + (i+1));
           allAttributes += `<div class="attribute"><label class="ellipsis attributeLabel">${SALE_ATTRIBUTES_LIST[i].Name} </label>`;
-          if(SALE_ATTRIBUTES_LIST[i].Type == "Text")
-          {
-            
-            if(sl.AdditionalAttributes[("AdditionalAttribute" +(i+1))] == null)
-            {
+          if (SALE_ATTRIBUTES_LIST[i].Type == "Text") {
+            if (sl.AdditionalAttributes[("AdditionalAttribute" + (i+1))] == null) {
               allAttributes += `<input type="text" value='' id='${input_id}' class="attributeInput input"/>`;
+            } else {
+              allAttributes += `<input type="text" value='${sl.AdditionalAttributes[("AdditionalAttribute" + (i+1))]}' id='${input_id}' class="attributeInput input"/>`;
             }
-            else
-            {
-              allAttributes += `<input type="text" value='${sl.AdditionalAttributes[("AdditionalAttribute" +(i+1))]}' id='${input_id}' class="attributeInput input"/>`;
-            }
-            
-          }
-          else if (SALE_ATTRIBUTES_LIST[i].Type == "List")
-          {
-            allAttributes += `<select id='${input_id}' class="attributeSelect" name='${SALE_ATTRIBUTES_LIST[i].Name}'>`
+          } else if (SALE_ATTRIBUTES_LIST[i].Type == "List") {
+            allAttributes += `<select id='${input_id}' class="attributeSelect" name='${SALE_ATTRIBUTES_LIST[i].Name}'>`;
             const myArray = SALE_ATTRIBUTES_LIST[i].Values.split(",");
-            let currentValue = sl.AdditionalAttributes[("AdditionalAttribute" +(i+1))]
+            let currentValue = sl.AdditionalAttributes[("AdditionalAttribute" + (i+1))];
             myArray.push("");
-            if(currentValue == null)
-              {
-                currentValue = "";
+            if (currentValue == null) {
+              currentValue = "";
+            }
+            for (let i = 0; i < myArray.length; i++) {
+              if (myArray[i] == currentValue) {
+                allAttributes += `<option selected value='${myArray[i]}'>${myArray[i]}</option>`;
+              } else {
+                allAttributes += `<option value='${myArray[i]}'>${myArray[i]}</option>`;
               }
-            for (let i = 0; i<myArray.length; i++)
-            {
-              if(myArray[i] == currentValue)
-              {
-                allAttributes+= `<option selected value='${myArray[i]}'>${myArray[i]}</option>`;
-              }
-              else{
-                allAttributes+= `<option value='${myArray[i]}'>${myArray[i]}</option>`;
-              }
-              
             }
             allAttributes += `</select>`;
-          }
-          else if(SALE_ATTRIBUTES_LIST[i].Type == "Checkbox")
-          {
-            allAttributes += `<select id='${input_id}' class="attributeSelect" name='${SALE_ATTRIBUTES_LIST[i].Name}'>`
-            if(sl.AdditionalAttributes[("AdditionalAttribute" +(i+1))] == "true")
-            {
-              allAttributes+= `<option selected value='true'>true</option>`;
-              allAttributes+= `<option value='false'>false</option>`;
-              //allAttributes+= `<input checked type="checkbox" id='${input_id}' class="attributeInput checkboxx input">`
+          } else if (SALE_ATTRIBUTES_LIST[i].Type == "Checkbox") {
+            if (sl.AdditionalAttributes[("AdditionalAttribute" + (i+1))] == "true") {
+              allAttributes += `<input checked type="checkbox" id='${input_id}' class="attributeInput input">`;
+            } else {
+              allAttributes += `<input type="checkbox" id='${input_id}' class="attributeInput input">`;
             }
-            else
-            {
-              allAttributes+= `<option value='true'>true</option>`;
-              allAttributes+= `<option selected value='false'>false</option>`;
-              //allAttributes+= `<input type="checkbox" id='${input_id}' class="attributeInput checkboxx input">`
-            }
-            allAttributes += `</select>`;
-            
           }
           allAttributes += `</div>`;
         }
-        
         document.getElementById(eleID).innerHTML = allAttributes;
       }
-      // SALE ToDo Real Put Request !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      function putSaleAttributeHelper(sale_id, eleID)
-      {
+      function putSaleAttributeHelper(sale_id, eleID) {
         document.getElementById(eleID).style.backgroundColor = 'red';
         let sale_body = {"ID": sale_id, "AdditionalAttributes": {}};
-      
-        // values to get as (purchase_id)+(_)+(AdditionalAttribute#)
-        for(let i = 1; i <= 10; i++)
-        {
-          if(document.getElementById(sale_id + "_" + ("AdditionalAttribute" + i)).type == "checkbox")
-          {
-            if(document.getElementById(sale_id + "_" + ("AdditionalAttribute" + i)).checked)
-            {
-              sale_body.AdditionalAttributes[("AdditionalAttribute" + i)] = "true";
-            }
-            else
-            {
-              sale_body.AdditionalAttributes[("AdditionalAttribute" + i)] = "false";
-            }
+        for (let i = 1; i <= 10; i++) {
+          let elem = document.getElementById(sale_id + "_" + ("AdditionalAttribute" + i));
+          if (elem.type === "checkbox") {
+            sale_body.AdditionalAttributes[("AdditionalAttribute" + i)] = elem.checked ? "true" : "false";
+          } else {
+            sale_body.AdditionalAttributes[("AdditionalAttribute" + i)] = elem.value;
           }
-          else
-          {
-            sale_body.AdditionalAttributes[("AdditionalAttribute" + i)] = document.getElementById(sale_id + "_" + ("AdditionalAttribute" + i)).value;
-          }
-          
         }
         console.log(sale_body);
-        DEAR_GET2PUTSaleAttributes(sale_body,eleID)
+        DEAR_GET2PUTSaleAttributes(sale_body, eleID);
       }
-
-      function showPurchase(pr, elementID)
-      {
+      function showPurchase(pr, elementID) {
         console.log(pr);
-        if(pr.Type == "Advanced Purchase")
-        {
-          var toAppend = `<div style="background-color: #a5313145;align-items: center;display: flex;justify-content: space-around;"><b>${pr.Type} `+pr.OrderNumber+'('+pr.Status+')</b></div><div class="columns"><div  class="column column-grow" style="flex-shrink: 1;"> '+pr.Supplier+`</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Order: ${pr.Order.Status}</div><div class="column">Total: ${pr.Order.Total} ${pr.SupplierCurrency}</div>`;
-
+        if (pr.Type == "Advanced Purchase") {
+          var toAppend = `<div style="background-color: #a5313145;align-items: center;display: flex;justify-content: space-around;"><b>${pr.Type} ${pr.OrderNumber} (${pr.Status})</b></div><div class="columns"><div class="column column-grow" style="flex-shrink: 1;">${pr.Supplier}</div><span onclick="closeThis(this)" class="close">×</span></div><div class="column">Order: ${pr.Order.Status}</div><div class="column">Total: ${pr.Order.Total} ${pr.SupplierCurrency}</div>`;
+        } else {
+          var toAppend = `<div style="background-color: #a5313145;align-items: center;display: flex;justify-content: space-around;"><b>${pr.OrderNumber} (${pr.Status})</b></div><div class="columns"><div class="column column-grow" style="flex-shrink: 1;">${pr.Supplier}</div><span onclick="closeThis(this)" class="close">×</span></div><div class="column">Order: ${pr.Order.Status}</div><div class="column">Total: ${pr.Order.Total} ${pr.SupplierCurrency}</div>`;
         }
-        else{
-          var toAppend = '<div style="background-color: #a5313145;align-items: center;display: flex;justify-content: space-around;"><b>'+pr.OrderNumber+'('+pr.Status+')</b></div><div class="columns"><div  class="column column-grow" style="flex-shrink: 1;"> '+pr.Supplier+`</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Order: ${pr.Order.Status}</div><div class="column">Total: ${pr.Order.Total} ${pr.SupplierCurrency}</div>`;
-
-        }
-				let toAttach = "<ul style=\"padding-inline-start: 20px;\">";
-        if ( pr.Attachments.length > 0)
-        {
-          for ( i=0; i<pr.Attachments.length; i++)
-          {
+        let toAttach = "<ul style=\"padding-inline-start: 20px;\">";
+        if (pr.Attachments.length > 0) {
+          for (let i = 0; i < pr.Attachments.length; i++) {
             let decoded = decodeURI(pr.Attachments[i].FileName);
             toAttach += `<a href="${pr.Attachments[i].DownloadUrl}" target="_blank"><li style="margin-bottom:1em;">${decoded}</li></a>`;
           }
@@ -453,601 +353,19 @@
         toAttach += "</ul>";
         let attachments = `<div onclick="popDataPurchaseAttachments(this)" data-purchase-attachments='${toAttach}' class="button" style="overflow-wrap: anywhere;background-color: #795548;align-items: center;display: flex;justify-content: space-around;flex-grow: 1;margin: 1px;"><b>Attachments ${pr.Attachments.length}</b></div>`;
         let attributes = `<div onclick="setPurchaseAtributes();popPurchaseAttributes(this)" data-purchase-type="${pr.Type}" data-purchase-id=${pr.ID} data-purchase-supID=${pr.SupplierID} class="button" style="background-color: #009688;align-items: center;display: flex;justify-content: space-around;flex-grow: 1;margin: 1px;"><b>Attributes</b></div>`;
-        let divdiv = '<div calss="columns" style="display: flex;">'+ attachments + attributes + '</div>';
-  
+        let divdiv = '<div class="columns" style="display: flex;">' + attachments + attributes + '</div>';
         document.getElementById(elementID).innerHTML = toAppend + divdiv;
-
       }
-      function showSale(sl, elementID)
-      {
+      function showSale(sl, elementID) {
         console.log(sl);
         let tempInvoices = "";
-        for (i=0;  i< sl.Invoices.length; i++)
-        {
-          
-          tempInvoices +=`<div class="column"><b>Invoice#${sl.Invoices[i].InvoiceNumber}  ${sl.Invoices[i].Status}</b><br> <b> Amount:</b> ${sl.Invoices[i].Total}${sl.BaseCurrency} <br><b>Paid:</b> ${sl.Invoices[i].Paid}${sl.CustomerCurrency}</div>`;
+        for (let i = 0; i < sl.Invoices.length; i++) {
+          tempInvoices += `<div class="column"><b>Invoice#${sl.Invoices[i].InvoiceNumber} ${sl.Invoices[i].Status}</b><br><b>Amount:</b> ${sl.Invoices[i].Total}${sl.BaseCurrency}<br><b>Paid:</b> ${sl.Invoices[i].Paid}${sl.CustomerCurrency}</div>`;
         }
-        let toAppend = '<div style="background-color: #1a702324;align-items: center;display: flex;justify-content: space-around;"><b>'+sl.Order.SaleOrderNumber+'('+sl.Status+')</b></div><div class="columns"><div  class="column column-grow" style="flex-shrink: 1;"> '+sl.Customer+`</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column"><b>Order:</b> ${sl.Order.Status}<br>Total: ${sl.Order.Total}${sl.CustomerCurrency}</div><div class="column"><b>Quote:</b> ${sl.Quote.Status}</div>`;
-				
-        let toAttach = "<ul style=\"padding-inline-start: 20px;\">";
-        if ( sl.Attachments.length > 0)
-        {
-          for ( i=0; i<sl.Attachments.length; i++)
-          {
-            let decoded = decodeURI(sl.Attachments[i].FileName);
-            toAttach += `<a href="${sl.Attachments[i].DownloadUrl}" target="_blank"><li style="margin-bottom:1em;">${decoded}</li></a>`;
-          }
-        }
-        toAttach += "</ul>";
-        let attachments = `<div onclick="popDataSaleAttachments(this)" data-sale-attachments='${toAttach}' class="button" style="overflow-wrap: anywhere;background-color: #795548;align-items: center;display: flex;justify-content: space-around;flex-grow: 1;margin: 1px;"><b>Attachments ${sl.Attachments.length}</b></div>`;
-        let attributes = `<div onclick="setSaleAtributes();popSaleAttributes(this)" data-sale-id=${sl.ID} data-sale-cusID=${sl.CustomerID} class="button" style="background-color: #009688;align-items: center;display: flex;justify-content: space-around;flex-grow: 1;margin: 1px;"><b>Attributes</b></div>`;
-        let divdiv = '<div calss="columns" style="display: flex;">'+ attachments + attributes + '</div>';
-        
-        
-        document.getElementById(elementID).innerHTML = toAppend + tempInvoices + divdiv;
-
-
-      }
-      function showProduct(pr)
-      {
-        console.log(pr);
-        let product = pr.Products[0];
-        let msg = "AverageCost: " + product.AverageCost;
-        let nt = "Average cost in dear is not actual";
-        let topop = {"title":product.SKU,"message":msg,"note":nt};
-        popProduct(topop);
-      }
-      
-
-
-      // Dear Calls GET
-      function DEAR_getProduct(Product_ID)
-      {
-        let request = new XMLHttpRequest();
-				request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/product?ID='+Product_ID);
-				request.setRequestHeader('Content-Type', 'application/json');
-				request.setRequestHeader('api-auth-accountid',  FIRST);
-				request.setRequestHeader('api-auth-applicationkey',  SECOND);
-				request.onreadystatechange = function () 
-				{
-					if (this.readyState === 4) 
-					{
-						if ( this.status == 200 )
-						{
-							let product = JSON.parse(this.responseText);
-              showProduct(product);
-						}
-					}
-				}
-				request.send();
-
-
-      }
-      function DEAR_getItemsList(toSearch)
-      {
-        let request = new XMLHttpRequest();
-				request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/product?Sku='+toSearch);
-				request.setRequestHeader('Content-Type', 'application/json');
-				request.setRequestHeader('api-auth-accountid',  FIRST);
-				request.setRequestHeader('api-auth-applicationkey',  SECOND);
-				request.onreadystatechange = function () 
-				{
-					if (this.readyState === 4) 
-					{
-						if ( this.status == 200 )
-						{
-							const obj = JSON.parse(this.responseText);
-							let list = '';
-							for (i=0; i<obj.Products.length; i++) {
-								list += '<li onMouseDown="itemThis(this)">' + obj.Products[i].SKU + '</li>';
-
-							}
-							setThreeBoxItemSearchResult('<ul>' + list + '</ul>');
-
-						}
-					}
-				}
-				request.send();
-        showThreeBoxItemSearchResult();
-        searchingThreeBoxItemSearchResult(toSearch);
-
-      }
-		  function DEAR_findAvailability(what)
-		  {
-			  var request = new XMLHttpRequest();
-				request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/ref/productavailability?Sku='+what);
-				request.setRequestHeader('Content-Type', 'application/json');
-				request.setRequestHeader('api-auth-accountid',  FIRST);
-				request.setRequestHeader('api-auth-applicationkey', SECOND);
-        const randID = Math.random().toString(16).substr(2, 8);
-        let toAppend = '<div id="'+randID+'" class="columns-vertical margin padding light-box"><div class="columns"><div  class="column column-grow"> '+what+'</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Finding...</div></div>';
-				document.getElementById("FourUserData").innerHTML += toAppend;
-				request.onreadystatechange = function () 
-				{
-					if (this.readyState === 4) 
-					{
-						if ( this.status == 200 )
-						{
-							const obj = JSON.parse(this.responseText);
-							if(obj.ProductAvailabilityList.length > 0)
-							{
-								for (i=0; i<obj.ProductAvailabilityList.length; i++) {
-									let toAppend = '<div class="columns">#'+(i+1)+' &emsp; <div  class="column column-grow" style="flex-shrink: 1;"> <b>'+obj.ProductAvailabilityList[i].SKU+'</b></div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column" onclick="DEAR_getProduct('+"'"+obj.ProductAvailabilityList[i].ID+"'"+')">'+obj.ProductAvailabilityList[i].Name+'<br>Allocated: '+ obj.ProductAvailabilityList[i].Allocated +'<br>Available: '+ obj.ProductAvailabilityList[i].Available +'<br>Batch: '+ obj.ProductAvailabilityList[i].Batch +'<br>ExpiryDate: '+ obj.ProductAvailabilityList[i].ExpiryDate +'<br>Location: '+ obj.ProductAvailabilityList[i].Location +'<br>OnHand: '+ obj.ProductAvailabilityList[i].OnHand +'<br>OnOrder: '+ obj.ProductAvailabilityList[i].OnOrder+'</div>';
-									//obj.ProductAvailabilityList[i]
-                  if(i==0){
-									document.getElementById(randID).innerHTML = '<div style="background-color: #afafaf45;align-items: center;display: flex;justify-content: space-around;">Product Availability</div>' + toAppend;
-                  }
-                  else{document.getElementById(randID).innerHTML += toAppend;}
-								}
-                document.getElementById(randID).innerHTML += `<span class="historyButton column-grow" onClick="getCOP('${what}')">History</span>\n`;
-							}
-							else {
-								let toAppend = '<div class="columns"><div  class="column column-grow" style="flex-shrink: 1;"> '+what+'</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">No Availability</div>';
-									//obj.ProductAvailabilityList[i]
-
-									document.getElementById(randID).innerHTML = toAppend + `<span class="historyButton column-grow" onClick="getCOP('${what}')">History</span>\n`;
-
-							}
-						}
-					}
-				}
-				request.send();
-
-		  }
-      function DEAR_getSale(Sale_ID, eleID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/sale?ID='+Sale_ID);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Sale = JSON.parse(this.responseText);
-              showSale(Sale, eleID);
-              //let toAppend = '<div class="columns-vertical margin padding light-box"><div class="columns"><div  class="column column-grow"> '+Sale.Customer+'</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Test</div></div>';
-				      //document.getElementById("FourUserData").innerHTML += toAppend;
-
-            }
-          }
-        };
-        request.send(); 
-		  }
-      function DEAR_searchSale(toSearch)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/saleList?Search='+toSearch);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-        const randID = Math.random().toString(16).substr(2, 8);
-        let toAppend = '<div id="'+randID+'" class="columns-vertical margin padding light-box"><div class="columns"><div  class="column column-grow"> '+toSearch+'</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Searching...</div></div>';
-				document.getElementById("FourUserData").innerHTML += toAppend;
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let SO = JSON.parse(this.responseText);
-              let SOID = SO.SaleList[0].SaleID; //First Sale in List
-              let SOURL = SALE_RAW_URL + SOID;
-              DEAR_getSale(SOID, randID);
-
-            }
-          }
-        };
-        request.send(); 
-		  }
-      function DEAR_getPurchase(Purchase_ID, eleID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/purchase?ID='+Purchase_ID);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Purchase = JSON.parse(this.responseText);
-              showPurchase(Purchase, eleID);
-              //let toAppend = '<div class="columns-vertical margin padding light-box"><div class="columns"><div  class="column column-grow"> '+Sale.Customer+'</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Test</div></div>';
-				      //document.getElementById("FourUserData").innerHTML += toAppend;
-
-            }
-          }
-        };
-        request.send(); 
-		  }
-      function DEAR_getAdvancedPurchase(Purchase_ID, eleID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/advanced-purchase?ID='+Purchase_ID);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Purchase = JSON.parse(this.responseText);
-              showPurchase(Purchase, eleID);
-              //let toAppend = '<div class="columns-vertical margin padding light-box"><div class="columns"><div  class="column column-grow"> '+Sale.Customer+'</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Test</div></div>';
-				      //document.getElementById("FourUserData").innerHTML += toAppend;
-
-            }
-          }
-        };
-        request.send(); 
-		  }
-      function DEAR_searchPurchase(toSearch)
-      {
-        
-			  var request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/purchaseList?Search='+toSearch);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-        const randID = Math.random().toString(16).substr(2, 8);
-        let toAppend = '<div id="'+randID+'" class="columns-vertical margin padding light-box"><div class="columns"><div  class="column column-grow"> '+toSearch+'</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Searching...</div></div>';
-				document.getElementById("FourUserData").innerHTML += toAppend;
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let PO = JSON.parse(this.responseText);
-              let POID = PO.PurchaseList[0].ID; //First Purchase in List
-              let POURL = PURCHASE_RAW_URL + POID;
-              if(PO.PurchaseList[0].Type == "Advanced Purchase")
-              {
-                DEAR_getAdvancedPurchase(POID, randID);
-              }
-              else{
-                DEAR_getPurchase(POID, randID);
-              }
-              
-
-            }
-          }
-        };
-        request.send(); 
-		  }
-      // ^Dear Attributes
-      function setPurchaseAtributes()
-      {
-        if(PURCHASE_ATTRIBUTES_LIST.length < 1)
-        {
-        var request = new XMLHttpRequest();
-
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/ref/attributeset?Name=Purchase');
-
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid', FIRST);
-        request.setRequestHeader('api-auth-applicationkey', SECOND);
-
-        request.onreadystatechange = function () {
-          if (this.readyState === 4) {
-            if ( this.status == 200 )
-              {
-                let resJson = JSON.parse(this.responseText);
-                PURCHASE_ATTRIBUTES_LIST = resJson.AttributeSetList[0].Attributes;
-                console.log(PURCHASE_ATTRIBUTES_LIST);
-              }
-          }
-        };
-
-        request.send();
-      }
-      }
-      function setSaleAtributes()
-      {
-        if(SALE_ATTRIBUTES_LIST.length < 1)
-        {
-        var request = new XMLHttpRequest();
-
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/ref/attributeset?Name=Quote');
-
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid', FIRST);
-        request.setRequestHeader('api-auth-applicationkey', SECOND);
-
-        request.onreadystatechange = function () {
-          if (this.readyState === 4) {
-            if ( this.status == 200 )
-              {
-                let resJson = JSON.parse(this.responseText);
-                SALE_ATTRIBUTES_LIST = resJson.AttributeSetList[0].Attributes;
-                console.log(SALE_ATTRIBUTES_LIST);
-              }
-          }
-        };
-
-        request.send();
-      }
-      }
-      function DEAR_getPurchaseAttributes(randomID, purchaseID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/purchase?ID=${purchaseID}`);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Purchase = JSON.parse(this.responseText);
-              popPurchaseAttributesExtra(randomID, Purchase)
-
-            }
-          }
-        };
-        request.send(); 
-		  }
-      function DEAR_getAdvancedPurchaseAttributes(randomID, purchaseID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/advanced-purchase?ID=${purchaseID}`);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Purchase = JSON.parse(this.responseText);
-              popPurchaseAttributesExtra(randomID, Purchase)
-
-            }
-          }
-        };
-        request.send(); 
-		  }
-      function DEAR_getSaleAttributes(randomID, saleID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/sale?ID=${saleID}`);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Sale = JSON.parse(this.responseText);
-              popSaleAttributesExtra(randomID, Sale)
-
-            }
-          }
-        };
-        request.send(); 
-		  }
-      // ^Dear Attribute PUT TC (Serialize used here)
-      function DEAR_GET2PUTPurchaseAttributes(purchaseBody, eleID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/advanced-purchase?ID='+purchaseBody.ID);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Purchase = JSON.parse(this.responseText);
-              Purchase.AdditionalAttributes = purchaseBody.AdditionalAttributes;
-              console.log(Purchase);
-              document.getElementById(eleID).style.backgroundColor = 'orange';
-              DEAR_putPurchaseAttributes(Purchase,eleID)
-            }
-            console.log(this);
-          }
-        };
-        request.send(); 
-		  }
-      function DEAR_putPurchaseAttributes(purchaseBody, eleID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('PUT', 'https://inventory.dearsystems.com/ExternalApi/v2/advanced-purchase');
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Purchase = JSON.parse(this.responseText);
-              console.log(Purchase);
-              document.getElementById(eleID).style.backgroundColor = '';
-            }
-            console.log(this);
-          }
-        };
-        request.send(JSON.stringify(purchaseBody)); 
-		  }
-      function DEAR_putAdvancedPurchaseAttributes(purchaseBody)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('PUT', 'https://inventory.dearsystems.com/ExternalApi/v2/purchase');
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Purchase = JSON.parse(this.responseText);
-              console.log(Purchase);
-            }
-          }
-        };
-        request.send(purchaseBody); 
-		  }
-      // No need for Advanced Sale :D
-      function DEAR_GET2PUTSaleAttributes(saleBody, eleID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/sale?ID='+saleBody.ID);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Sale = JSON.parse(this.responseText);
-              Sale.AdditionalAttributes = saleBody.AdditionalAttributes;
-              console.log(Sale);
-              DEAR_putSaleAttributes(Sale,eleID)
-            }
-            console.log(this);
-          }
-        };
-        request.send(); 
-		  }
-      function DEAR_putSaleAttributes(saleBody,eleID)
-      {
-			  var request = new XMLHttpRequest();
-        request.open('PUT', 'https://inventory.dearsystems.com/ExternalApi/v2/sale');
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid',  FIRST);
-        request.setRequestHeader('api-auth-applicationkey',  SECOND);
-
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let Sale = JSON.parse(this.responseText);
-              console.log(Sale);
-              document.getElementById(eleID).style.backgroundColor = '';
-            }
-          }
-        };
-        request.send(JSON.stringify(saleBody)); 
-		  }
-      
-      function showCOP(COP, eleID)
-      {
-        if (COP.size > 0)
-        {
-          console.log(COP);
-          let toAppend = "";
-          for (i=0; i<COP.size;i++)
-          {
-            if (i % 2 === 0) 
-            {
-              toAppend += `<div class="historyPerCustomer column">${COP.data[i][2]} ${COP.data[i][3]}\n${COP.data[i][4]}\nQuantity:${COP.data[i][6]} Invoice:${COP.data[i][7]}\nSale:${COP.data[i][8]} Discount:${COP.data[i][9]}\n</div>`;
-            } 
-            else 
-            {
-              toAppend += `<div class="historyPerCustomer column" style="background-color: #afafaf45;">${COP.data[i][2]} ${COP.data[i][3]}\n${COP.data[i][4]}\nQuantity:${COP.data[i][6]} Invoice:${COP.data[i][7]}\nSale:${COP.data[i][8]} Discount:${COP.data[i][9]}\n</div>`;
-            }
-            //toAppend += `<div class="column">${COP.data[i][2]} ${COP.data[i][3]}\n${COP.data[i][4]}\nQuantity:${COP.data[i][6]} Invoice:${COP.data[i][7]}\nSale:${COP.data[i][8]} Discount:${COP.data[i][9]}\n</div>`;
-            //console.log(COP.data[i]);#afafaf45
-          }
-          document.getElementById(eleID).innerHTML = `<div class="columns" style="flex-flow: column-reverse;background-color: #afafafb8;"><div  class="column column-grow" style="padding: 10px;"> ${COP.sku} || ${COP.data[0][1]}</div><span onclick="closeThis(this)" class="close" style="align-self: self-end;">&times;</span></div>` + toAppend;
-        }
-        else
-        {
-          document.getElementById(eleID).innerHTML = `<div class="columns"><div  class="column column-grow"> ${COP.sku}</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">No History Found</div>`;
-        }
-      }
-      function getCOP(sku)
-      {
-        var request = new XMLHttpRequest();
-        request.open('GET', 'https://faas-blr1-8177d592.doserverless.co/api/v1/web/fn-232e323b-855f-412a-8434-8578cb7e6e16/default/cop?sku='+sku);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('X-Require-Whisk-Auth',  THIRD);
-        const randID = Math.random().toString(16).substr(2, 8);
-        let toAppend = '<div id="'+randID+'" class="columns-vertical margin padding light-box"><div class="columns"><div  class="column column-grow"> '+sku+'</div><span onclick="closeThis(this)" class="close">&times;</span></div><div class="column">Searching History</div></div>';
-				document.getElementById("FourUserData").innerHTML += toAppend;
-        request.onreadystatechange = function () 
-        {
-          if (this.readyState === 4) 
-          {
-            if ( this.status == 200 )
-            {
-              let DATA = JSON.parse(this.responseText);
-              console.log(DATA);
-              showCOP(DATA, randID);
-            }
-          }
-        };
-        request.send(); 
-      }
-
-
-      // Get First&Second Done
-      function getFirst(){Missive.fetchLabels('1ce404d3-6bad-4753-b29d-53daf66a7fc6').then((first) => {FIRST = first.name;});}
-      function getSecond(){Missive.fetchLabels('9f2f1903-60fa-4e08-84a4-5f3ed0dd765b').then((second) => {SECOND = second.name;});}
-      function getThird(){Missive.fetchLabels('140fdccc-5151-4e25-bb66-70ac4b1f9cb5').then((third) => {THIRD = third.name;});}
-      function getBoth()
-      {
-        if(FIRST.length < 1){getFirst();}
-        if(SECOND.length < 1){getSecond();}
-        if(THIRD.length < 1){getThird();}
-      }
-
-      // OnChange Done
-      Missive.on('change:conversations', (ids) => {
-        Missive.fetchConversations(ids).then((conversations) => {
-          resetFields();
-          if (conversations.length != 1) 
-          {
-            // Do nothing if multiple conversations are selected.
-            return
-          }
-
-          document.getElementById("OneBoxSubject").innerHTML =  conversations[0].subject;
-          autoFindSOPO(conversations[0]);
-          getBoth();
-        })
-      });
-
-      // OnClick Static Done
-      document.getElementById("SOButton").onclick = function() {DEAR_searchSale(document.getElementById("SONumber").innerHTML);setSaleAtributes()};
-      document.getElementById("POButton").onclick = function() {DEAR_searchPurchase(document.getElementById("PONumber").innerHTML);setPurchaseAtributes()};
-      document.getElementById("ThreeBoxItemFindButton").onclick = function() {DEAR_findAvailability(document.getElementById("ThreeBoxItemSearchBox").value)};
-      
-      //window.parent.document.getElementsByClassName("missive-avatar missive-column-auto iframe-integration-icon")[0].children[0].children[0].src = "https://www.seekpng.com/png/detail/85-852305_dear-systems-dear-inventory-logo.png"
-
-    </script>
-  </body>
+        let toAppend = `<div style="background-color: #1a702324;align-items: center;display: flex;justify-content: space-around;"><b>${sl.OrderbezierPaths.strokeColor = '#000000';
+ctx.stroke();
+ctx.closePath();
+ctx.restore();
+</script>
+</body>
 </html>
