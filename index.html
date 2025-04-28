@@ -543,16 +543,111 @@
       let supplierDetails = {};
       let activeTab = 'orders';
       
+      // Wait for DOM to be fully loaded before attaching event handlers
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.addEventListener('click', function() {
+            const tabId = this.textContent.trim().toLowerCase().split(' ')[1];
+            switchTab(tabId);
+          });
+        });
+        
+        // Search button event listeners
+        document.getElementById("OrderSearchButton").addEventListener('click', function() {
+          const searchValue = document.getElementById("OrderSearchBox").value;
+          if (searchValue) searchOrder(searchValue);
+        });
+        
+        document.getElementById("ProductSearchButton").addEventListener('click', function() {
+          const searchValue = document.getElementById("ProductSearchBox").value;
+          if (searchValue) searchProduct(searchValue);
+        });
+        
+        document.getElementById("CustomerSearchButton").addEventListener('click', function() {
+          const searchValue = document.getElementById("CustomerSearchBox").value;
+          if (searchValue) searchCustomer(searchValue);
+        });
+        
+        document.getElementById("SupplierSearchButton").addEventListener('click', function() {
+          const searchValue = document.getElementById("SupplierSearchBox").value;
+          if (searchValue) searchSupplier(searchValue);
+        });
+        
+        document.getElementById("InventorySearchButton").addEventListener('click', function() {
+          const searchValue = document.getElementById("InventorySearchBox").value;
+          if (searchValue) searchInventory(searchValue);
+        });
+        
+        // Add keypress listeners for all search boxes
+        document.getElementById("OrderSearchBox").addEventListener('keypress', debounce(function(e) {
+          if (e.key === 'Enter') {
+            const searchValue = this.value;
+            if (searchValue) searchOrder(searchValue);
+          }
+        }, 300));
+        
+        document.getElementById("ProductSearchBox").addEventListener('keypress', debounce(function(e) {
+          if (e.key === 'Enter') {
+            const searchValue = this.value;
+            if (searchValue) searchProduct(searchValue);
+          }
+        }, 300));
+        
+        document.getElementById("CustomerSearchBox").addEventListener('keypress', debounce(function(e) {
+          if (e.key === 'Enter') {
+            const searchValue = this.value;
+            if (searchValue) searchCustomer(searchValue);
+          }
+        }, 300));
+        
+        document.getElementById("SupplierSearchBox").addEventListener('keypress', debounce(function(e) {
+          if (e.key === 'Enter') {
+            const searchValue = this.value;
+            if (searchValue) searchSupplier(searchValue);
+          }
+        }, 300));
+        
+        document.getElementById("InventorySearchBox").addEventListener('keypress', debounce(function(e) {
+          if (e.key === 'Enter') {
+            const searchValue = this.value;
+            if (searchValue) searchInventory(searchValue);
+          }
+        }, 300));
+        
+        // Initialize insight actions
+        document.getElementById('viewLowStock').addEventListener('click', function() {
+          switchTab('inventory');
+          // Additional logic to show low stock items
+        });
+        
+        document.getElementById('viewPendingOrders').addEventListener('click', function() {
+          switchTab('orders');
+          // Additional logic to show pending orders
+        });
+        
+        // Initialize the app
+        init();
+        
+        console.log("DearSystems integration initialized successfully");
+      });
+      
       // Key retrieval
       function getFirst() {
         Missive.fetchLabels('1ce404d3-6bad-4753-b29d-53daf66a7fc6').then((first) => {
           FIRST = first.name;
+          console.log("Successfully retrieved FIRST key");
+        }).catch(error => {
+          console.error("Error fetching FIRST key:", error);
         });
       }
       
       function getSecond() {
         Missive.fetchLabels('9f2f1903-60fa-4e08-84a4-5f3ed0dd765b').then((second) => {
           SECOND = second.name;
+          console.log("Successfully retrieved SECOND key");
+        }).catch(error => {
+          console.error("Error fetching SECOND key:", error);
         });
       }
       
@@ -569,6 +664,20 @@
       
       // Tab switching
       function switchTab(tabId) {
+        console.log("Switching to tab:", tabId);
+        
+        // Map tab button text to actual tab IDs
+        const tabMap = {
+          'orders': 'orders',
+          'products': 'products', 
+          'customers': 'customers',
+          'suppliers': 'suppliers',
+          'inventory': 'inventory',
+          'insights': 'insights'
+        };
+        
+        const actualTabId = tabMap[tabId.toLowerCase()] || tabId;
+        
         // Hide all tabs
         document.querySelectorAll('.tab-content').forEach(tab => {
           tab.classList.remove('active');
@@ -580,19 +689,24 @@
         });
         
         // Activate the selected tab
-        document.getElementById(tabId).classList.add('active');
+        const tabElement = document.getElementById(actualTabId);
+        if (tabElement) {
+          tabElement.classList.add('active');
+        } else {
+          console.error("Tab element not found:", actualTabId);
+        }
         
         // Activate the tab button
         document.querySelectorAll('.tab').forEach(button => {
-          if (button.textContent.toLowerCase().includes(tabId.toLowerCase())) {
+          if (button.textContent.toLowerCase().includes(actualTabId.toLowerCase())) {
             button.classList.add('active');
           }
         });
         
-        activeTab = tabId;
+        activeTab = actualTabId;
         
         // Load data for the active tab if needed
-        if (tabId === 'insights') {
+        if (actualTabId === 'insights') {
           loadInsights();
         }
       }
@@ -635,6 +749,13 @@
       
       // DEAR API call to search sale
       function DEAR_searchSale(toSearch, randID) {
+        console.log("Searching sale order:", toSearch);
+        if (!FIRST || !SECOND) {
+          handleError(document.getElementById(randID), "API credentials not available. Please check your Missive labels.");
+          isSearching = false;
+          return;
+        }
+        
         let request = new XMLHttpRequest();
         request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/saleList?Search=' + toSearch);
         request.setRequestHeader('Content-Type', 'application/json');
@@ -653,7 +774,7 @@
                 handleError(cardElement, "No sale order found");
               }
             } else {
-              handleError(cardElement, "Error fetching sale order");
+              handleError(cardElement, "Error fetching sale order: " + this.status);
             }
           }
         };
@@ -714,111 +835,6 @@
               ${invoices ? `<div class="invoice-section">${invoices}</div>` : ''}
               <div class="action-buttons">
                 <a href="${SALE_RAW_URL}${sale.ID}" class="action-button" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
-                <button class="action-button" onclick="showOrderDetails('${elementID}')"><i class="fa fa-list-alt"></i> Show Details</button>
-                ${attachmentsButton}
-                <button class="action-button" onclick="createDraftFromOrder('${elementID}')"><i class="fa fa-envelope"></i> Create Draft</button>
-              </div>
-            </div>`;
-        }
-      }
-      
-      // DEAR API call to search purchase
-      function DEAR_searchPurchase(toSearch, randID) {
-        let request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/purchaseList?Search=' + toSearch);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid', FIRST);
-        request.setRequestHeader('api-auth-applicationkey', SECOND);
-        request.onreadystatechange = function () {
-          if (this.readyState === 4) {
-            isSearching = false;
-            let cardElement = document.getElementById(randID);
-            if (this.status === 200) {
-              let PO = JSON.parse(this.responseText);
-              if (PO.PurchaseList && PO.PurchaseList.length > 0) {
-                let POID = PO.PurchaseList[0].ID;
-                if (PO.PurchaseList[0].Type === "Advanced Purchase") {
-                  DEAR_getAdvancedPurchase(POID, randID);
-                } else {
-                  DEAR_getPurchase(POID, randID);
-                }
-              } else {
-                handleError(cardElement, "No purchase order found");
-              }
-            } else {
-              handleError(cardElement, "Error fetching purchase order");
-            }
-          }
-        };
-        request.send();
-      }
-      
-      // DEAR API call to get purchase details
-      function DEAR_getPurchase(Purchase_ID, eleID) {
-        let request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/purchase?ID=' + Purchase_ID);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid', FIRST);
-        request.setRequestHeader('api-auth-applicationkey', SECOND);
-        request.onreadystatechange = function () {
-          if (this.readyState === 4) {
-            let cardElement = document.getElementById(eleID);
-            if (this.status === 200) {
-              let Purchase = JSON.parse(this.responseText);
-              showPurchase(Purchase, eleID);
-            } else {
-              handleError(cardElement, "Error fetching purchase details");
-            }
-          }
-        };
-        request.send();
-      }
-      
-      // DEAR API call to get advanced purchase details
-      function DEAR_getAdvancedPurchase(Purchase_ID, eleID) {
-        let request = new XMLHttpRequest();
-        request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/advanced-purchase?ID=' + Purchase_ID);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.setRequestHeader('api-auth-accountid', FIRST);
-        request.setRequestHeader('api-auth-applicationkey', SECOND);
-        request.onreadystatechange = function () {
-          if (this.readyState === 4) {
-            let cardElement = document.getElementById(eleID);
-            if (this.status === 200) {
-              let Purchase = JSON.parse(this.responseText);
-              showPurchase(Purchase, eleID);
-            } else {
-              handleError(cardElement, "Error fetching advanced purchase details");
-            }
-          }
-        };
-        request.send();
-      }
-      
-      // Display purchase order
-      function showPurchase(purchase, elementID) {
-        orderDetails[elementID] = purchase;
-        let attachmentsButton = purchase.Attachments && purchase.Attachments.length > 0 ? `<button class="action-button" onclick="showAttachments('${elementID}')"><i class="fa fa-paperclip"></i> Attachments</button>` : '';
-        
-        let cardElement = document.getElementById(elementID);
-        if (cardElement) {
-          cardElement.innerHTML = `
-            <div class="card-header purchase">
-              <div>
-                <span class="card-title">Purchase Order: ${purchase.OrderNumber}</span>
-                <span class="card-status">(${purchase.Status})</span>
-              </div>
-              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
-            </div>
-            <div class="card-body">
-              <div class="grid-container">
-                <div><b>Supplier:</b> ${purchase.Supplier}</div>
-                <div><b>Order Status:</b> ${purchase.Order.Status}</div>
-                <div><b>Total:</b> ${purchase.Order.Total} ${purchase.SupplierCurrency}</div>
-                ${purchase.Type === "Advanced Purchase" ? `<div><b>Type:</b> ${purchase.Type}</div>` : ''}
-              </div>
-              <div class="action-buttons">
-                <a href="${PURCHASE_RAW_URL}${purchase.ID}" class="action-button" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
                 <button class="action-button" onclick="showOrderDetails('${elementID}')"><i class="fa fa-list-alt"></i> Show Details</button>
                 ${attachmentsButton}
                 <button class="action-button" onclick="createDraftFromOrder('${elementID}')"><i class="fa fa-envelope"></i> Create Draft</button>
@@ -1021,509 +1037,261 @@
         }
       }
       
-// Show order details
-function showOrderDetails(elementID) {
-  const data = orderDetails[elementID];
-  if (data) {
-    let html = '';
-    for (const key in data) {
-      if (typeof data[key] === 'object' && data[key] !== null) {
-        html += `<details>
-          <summary>${key}</summary>
-          <div style="padding-left: 20px;">
-            ${formatObjectForDisplay(data[key])}
-          </div>
-        </details>`;
-      } else {
-        html += `<div><strong>${key}:</strong> ${data[key]}</div>`;
-      }
-    }
-    openModal('genericModal', 'Order Details', html);
-  }
-}
-
-// Format object for display
-function formatObjectForDisplay(obj) {
-  let html = '';
-  if (Array.isArray(obj)) {
-    obj.forEach((item, index) => {
-      html += `<details>
-        <summary>Item ${index + 1}</summary>
-        <div style="padding-left: 20px;">
-          ${typeof item === 'object' ? formatObjectForDisplay(item) : item}
-        </div>
-      </details>`;
-    });
-  } else {
-    for (const key in obj) {
-      if (typeof obj[key] === 'object' && obj[key] !== null) {
-        html += `<details>
-          <summary>${key}</summary>
-          <div style="padding-left: 20px;">
-            ${formatObjectForDisplay(obj[key])}
-          </div>
-        </details>`;
-      } else {
-        html += `<div><strong>${key}:</strong> ${obj[key]}</div>`;
-      }
-    }
-  }
-  return html;
-}
-
-// Show attachments
-function showAttachments(elementID) {
-  const data = orderDetails[elementID];
-  if (data && data.Attachments && data.Attachments.length > 0) {
-    let html = data.Attachments.map(att => `
-      <div class="attachment-item">
-        <a href="${att.DownloadUrl}" target="_blank"><i class="fa fa-file"></i> ${decodeURI(att.FileName)}</a>
-      </div>
-    `).join('');
-    openModal('genericModal', 'Attachments', html);
-  } else {
-    openModal('genericModal', 'Attachments', '<div class="no-results">No attachments found</div>');
-  }
-}
-
-// Create draft email from order
-function createDraftFromOrder(elementID) {
-  const data = orderDetails[elementID];
-  if (data) {
-    let subject, body, email;
-    
-    if (data.Customer) { // Sale order
-      subject = `Re: Sale Order ${data.Order.SaleOrderNumber}`;
-      email = data.CustomerEmail || '';
-      body = `Dear ${data.Customer},\n\nRegarding your order ${data.Order.SaleOrderNumber} with a total of ${data.Order.Total} ${data.CustomerCurrency}.\n\nOrder Status: ${data.Status}\n\nPlease let me know if you have any questions.\n\nBest regards,`;
-    } else { // Purchase order
-      subject = `Re: Purchase Order ${data.OrderNumber}`;
-      email = data.SupplierEmail || '';
-      body = `Dear ${data.Supplier},\n\nRegarding purchase order ${data.OrderNumber} with a total of ${data.Order.Total} ${data.SupplierCurrency}.\n\nOrder Status: ${data.Status}\n\nPlease let me know if you have any questions.\n\nBest regards,`;
-    }
-    
-    Missive.compose({
-      subject: subject,
-      body: body,
-      to: email
-    }).then(() => {
-      // Draft created successfully
-    }).catch(error => {
-      openModal('genericModal', 'Error', `Failed to create draft: ${error.message}`);
-    });
-  }
-}
-
-// Load insights
-function loadInsights() {
-  // Get current date for date range
-  const today = new Date();
-  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  
-  const formattedFirstDay = firstDay.toISOString().split('T')[0];
-  const formattedLastDay = lastDay.toISOString().split('T')[0];
-  
-  // Fetch sale orders for the month
-  let request = new XMLHttpRequest();
-  request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/saleList?FromDate=${formattedFirstDay}&ToDate=${formattedLastDay}`);
-  request.setRequestHeader('Content-Type', 'application/json');
-  request.setRequestHeader('api-auth-accountid', FIRST);
-  request.setRequestHeader('api-auth-applicationkey', SECOND);
-  request.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status === 200) {
-      let response = JSON.parse(this.responseText);
-      if (response.SaleList) {
-        let totalSales = response.SaleList.reduce((sum, sale) => sum + (sale.Total || 0), 0);
-        document.getElementById('totalSales').textContent = totalSales.toFixed(2);
-        
-        // Calculate trend compared to last month (placeholder)
-        document.getElementById('salesTrend').innerHTML = '<i class="fa fa-arrow-up"></i> 5.2% from last month';
-      }
-    }
-  };
-  request.send();
-  
-  // Fetch purchase orders for the month
-  let purchaseRequest = new XMLHttpRequest();
-  purchaseRequest.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/purchaseList?FromDate=${formattedFirstDay}&ToDate=${formattedLastDay}`);
-  purchaseRequest.setRequestHeader('Content-Type', 'application/json');
-  purchaseRequest.setRequestHeader('api-auth-accountid', FIRST);
-  purchaseRequest.setRequestHeader('api-auth-applicationkey', SECOND);
-  purchaseRequest.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status === 200) {
-      let response = JSON.parse(this.responseText);
-      if (response.PurchaseList) {
-        let totalPurchases = response.PurchaseList.reduce((sum, purchase) => sum + (purchase.Total || 0), 0);
-        document.getElementById('totalPurchases').textContent = totalPurchases.toFixed(2);
-        
-        // Calculate trend compared to last month (placeholder)
-        document.getElementById('purchasesTrend').innerHTML = '<i class="fa fa-arrow-up"></i> 3.8% from last month';
-      }
-    }
-  };
-  purchaseRequest.send();
-  
-  // Get count of pending orders
-  let pendingRequest = new XMLHttpRequest();
-  pendingRequest.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/saleList?Status=Pending');
-  pendingRequest.setRequestHeader('Content-Type', 'application/json');
-  pendingRequest.setRequestHeader('api-auth-accountid', FIRST);
-  pendingRequest.setRequestHeader('api-auth-applicationkey', SECOND);
-  pendingRequest.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status === 200) {
-      let response = JSON.parse(this.responseText);
-      if (response.SaleList) {
-        document.getElementById('pendingOrdersCount').textContent = response.SaleList.length;
-      }
-    }
-  };
-  pendingRequest.send();
-  
-  // Placeholder for low stock items
-  document.getElementById('lowStockCount').textContent = '6';
-  
-  // Add event listeners for insight actions
-  document.getElementById('viewLowStock').onclick = function() {
-    switchTab('inventory');
-    // Additional logic to show low stock items
-  };
-  
-  document.getElementById('viewPendingOrders').onclick = function() {
-    switchTab('orders');
-    // Additional logic to show pending orders
-  };
-}
-
-// Search function with debounce
-function searchOrder(toSearch) {
-  if (isSearching) return;
-  isSearching = true;
-  toSearch = toSearch.trim().toUpperCase();
-  const randID = Math.random().toString(16).substr(2, 8);
-  const resultsContainer = document.getElementById("OrderSearchResults");
-  const cardHTML = `<div id="${randID}" class="card"><div class="card-header"><span class="card-title">${toSearch}</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="loading">Searching...</div></div></div>`;
-  resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
-  
-  if (toSearch.startsWith('S')) {
-    DEAR_searchSale(toSearch, randID);
-  } else if (toSearch.startsWith('P')) {
-    DEAR_searchPurchase(toSearch, randID);
-  } else {
-    isSearching = false;
-    handleError(document.getElementById(randID), "Please start with 'S' for Sale or 'P' for Purchase");
-  }
-}
-
-// Debounce function
-function debounce(func, wait) {
-  return function(...args) {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => func.apply(this, args), wait);
-  };
-}
-
-// Event listeners for Missive integration
-Missive.on('change:conversations', (ids) => {
-  Missive.fetchConversations(ids).then((conversations) => {
-    if (conversations.length !== 1) return;
-    getBoth();
-    const subject = conversations[0].subject;
-    
-    // Display the subject
-    const subjectDisplayDiv = document.getElementById('subjectDisplay');
-    subjectDisplayDiv.textContent = subject;
-    
-    // Extract order numbers from subject
-    const orderPattern = /[SP]\d+G/g;
-    const orders = subject.match(orderPattern) || [];
-    const orderButtonsDiv = document.getElementById('orderButtons');
-    orderButtonsDiv.innerHTML = '';
-    
-    orders.forEach(order => {
-      const button = document.createElement('button');
-      button.className = 'order-button';
-      button.textContent = order;
-      button.onclick = () => searchOrder(order);
-      orderButtonsDiv.appendChild(button);
-    });
-    
-    // Extract customer/supplier names for quick search
-    const emails = conversations[0].aliases.map(alias => alias.email);
-    if (emails.length > 0) {
-      // Check if email matches any customer or supplier
-      setTimeout(() => {
-        checkEmailsForContacts(emails);
-      }, 500);
-    }
-  });
-});
-
-// Check if email matches any contacts in DEAR
-function checkEmailsForContacts(emails) {
-  if (!emails.length || !FIRST || !SECOND) return;
-  
-  const email = emails[0];
-  
-  // Search for customer with this email
-  let request = new XMLHttpRequest();
-  request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/customer?Email=${encodeURIComponent(email)}`);
-  request.setRequestHeader('Content-Type', 'application/json');
-  request.setRequestHeader('api-auth-accountid', FIRST);
-  request.setRequestHeader('api-auth-applicationkey', SECOND);
-  request.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status === 200) {
-      let response = JSON.parse(this.responseText);
-      if (response.Customers && response.Customers.length > 0) {
-        // Found a customer match
-        showCustomerMatch(response.Customers[0]);
-      } else {
-        // Try supplier search
-        checkSupplierMatch(email);
-      }
-    } else if (this.readyState === 4) {
-      // Try supplier search
-      checkSupplierMatch(email);
-    }
-  };
-  request.send();
-}
-
-// Check if email matches a supplier
-function checkSupplierMatch(email) {
-  let request = new XMLHttpRequest();
-  request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/supplier?Email=${encodeURIComponent(email)}`);
-  request.setRequestHeader('Content-Type', 'application/json');
-  request.setRequestHeader('api-auth-accountid', FIRST);
-  request.setRequestHeader('api-auth-applicationkey', SECOND);
-  request.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status === 200) {
-      let response = JSON.parse(this.responseText);
-      if (response.Suppliers && response.Suppliers.length > 0) {
-        // Found a supplier match
-        showSupplierMatch(response.Suppliers[0]);
-      }
-    }
-  };
-  request.send();
-}
-
-// Show customer match notification
-function showCustomerMatch(customer) {
-  const randID = Math.random().toString(16).substr(2, 8);
-  const resultsContainer = document.getElementById("CustomerSearchResults");
-  
-  // Create a special card for matched customer
-  let cardHTML = `
-    <div id="${randID}" class="card">
-      <div class="card-header customer">
-        <div>
-          <span class="card-title">Customer Match: ${customer.Name}</span>
-          <span class="card-status">(${customer.Status})</span>
-        </div>
-        <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
-      </div>
-      <div class="card-body">
-        <div><b>Found a matching customer in DEAR Systems</b></div>
-        <div class="grid-container">
-          <div><b>Email:</b> ${customer.Email || 'N/A'}</div>
-          <div><b>Phone:</b> ${customer.Phone || 'N/A'}</div>
-          <div><b>Currency:</b> ${customer.Currency || 'N/A'}</div>
-        </div>
-        <div class="action-buttons">
-          <button class="action-button" onclick="viewCustomerDetails('${customer.ID}')">
-            <i class="fa fa-user"></i> View Customer
-          </button>
-          <button class="action-button" onclick="switchTab('customers')">
-            <i class="fa fa-search"></i> Go to Customers Tab
-          </button>
-        </div>
-      </div>
-    </div>`;
-  
-  // Switch to customers tab and show the card
-  switchTab('customers');
-  resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
-  customerDetails[randID] = customer;
-}
-
-// Show supplier match notification
-function showSupplierMatch(supplier) {
-  const randID = Math.random().toString(16).substr(2, 8);
-  const resultsContainer = document.getElementById("SupplierSearchResults");
-  
-  // Create a special card for matched supplier
-  let cardHTML = `
-    <div id="${randID}" class="card">
-      <div class="card-header purchase">
-        <div>
-          <span class="card-title">Supplier Match: ${supplier.Name}</span>
-          <span class="card-status">(${supplier.Status})</span>
-        </div>
-        <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
-      </div>
-      <div class="card-body">
-        <div><b>Found a matching supplier in DEAR Systems</b></div>
-        <div class="grid-container">
-          <div><b>Email:</b> ${supplier.Email || 'N/A'}</div>
-          <div><b>Phone:</b> ${supplier.Phone || 'N/A'}</div>
-          <div><b>Currency:</b> ${supplier.Currency || 'N/A'}</div>
-        </div>
-        <div class="action-buttons">
-          <button class="action-button" onclick="viewSupplierDetails('${supplier.ID}')">
-            <i class="fa fa-truck"></i> View Supplier
-          </button>
-          <button class="action-button" onclick="switchTab('suppliers')">
-            <i class="fa fa-search"></i> Go to Suppliers Tab
-          </button>
-        </div>
-      </div>
-    </div>`;
-  
-  // Switch to suppliers tab and show the card
-  switchTab('suppliers');
-  resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
-  supplierDetails[randID] = supplier;
-}
-
-// Search function integration
-document.getElementById("OrderSearchButton").onclick = function() {
-  const searchValue = document.getElementById("OrderSearchBox").value;
-  if (searchValue) searchOrder(searchValue);
-};
-
-document.getElementById("ProductSearchButton").onclick = function() {
-  const searchValue = document.getElementById("ProductSearchBox").value;
-  if (searchValue) searchProduct(searchValue);
-};
-
-document.getElementById("CustomerSearchButton").onclick = function() {
-  const searchValue = document.getElementById("CustomerSearchBox").value;
-  if (searchValue) searchCustomer(searchValue);
-};
-
-document.getElementById("SupplierSearchButton").onclick = function() {
-  const searchValue = document.getElementById("SupplierSearchBox").value;
-  if (searchValue) searchSupplier(searchValue);
-};
-
-document.getElementById("InventorySearchButton").onclick = function() {
-  const searchValue = document.getElementById("InventorySearchBox").value;
-  if (searchValue) searchInventory(searchValue);
-};
-
-// Add keypress listeners for all search boxes
-document.getElementById("OrderSearchBox").addEventListener('keypress', debounce(function(e) {
-  if (e.key === 'Enter') {
-    const searchValue = this.value;
-    if (searchValue) searchOrder(searchValue);
-  }
-}, 300));
-
-document.getElementById("ProductSearchBox").addEventListener('keypress', debounce(function(e) {
-  if (e.key === 'Enter') {
-    const searchValue = this.value;
-    if (searchValue) searchProduct(searchValue);
-  }
-}, 300));
-
-document.getElementById("CustomerSearchBox").addEventListener('keypress', debounce(function(e) {
-  if (e.key === 'Enter') {
-    const searchValue = this.value;
-    if (searchValue) searchCustomer(searchValue);
-  }
-}, 300));
-
-document.getElementById("SupplierSearchBox").addEventListener('keypress', debounce(function(e) {
-  if (e.key === 'Enter') {
-    const searchValue = this.value;
-    if (searchValue) searchSupplier(searchValue);
-  }
-}, 300));
-
-document.getElementById("InventorySearchBox").addEventListener('keypress', debounce(function(e) {
-  if (e.key === 'Enter') {
-    const searchValue = this.value;
-    if (searchValue) searchInventory(searchValue);
-  }
-}, 300));
-
-// Inventory search function
-function searchInventory(toSearch) {
-  const randID = Math.random().toString(16).substr(2, 8);
-  const resultsContainer = document.getElementById("InventorySearchResults");
-  const cardHTML = `<div id="${randID}" class="card"><div class="card-header"><span class="card-title">Inventory: ${toSearch}</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="loading">Searching inventory...</div></div></div>`;
-  resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
-  
-  // Implement inventory search with DEAR API
-  let request = new XMLHttpRequest();
-  request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/ref/productAvailability?ProductName=${encodeURIComponent(toSearch)}`);
-  request.setRequestHeader('Content-Type', 'application/json');
-  request.setRequestHeader('api-auth-accountid', FIRST);
-  request.setRequestHeader('api-auth-applicationkey', SECOND);
-  request.onreadystatechange = function () {
-    if (this.readyState === 4) {
-      let cardElement = document.getElementById(randID);
-      if (this.status === 200) {
-        let response = JSON.parse(this.responseText);
-        if (response.ProductAvailabilityList && response.ProductAvailabilityList.length > 0) {
-          showInventoryResults(response.ProductAvailabilityList, randID);
-        } else {
-          handleError(cardElement, "No inventory data found for the search term");
+      // Show order details
+      function showOrderDetails(elementID) {
+        const data = orderDetails[elementID];
+        if (data) {
+          let html = '';
+          for (const key in data) {
+            if (typeof data[key] === 'object' && data[key] !== null) {
+              html += `<details>
+                <summary>${key}</summary>
+                <div style="padding-left: 20px;">
+                  ${formatObjectForDisplay(data[key])}
+                </div>
+              </details>`;
+            } else {
+              html += `<div><strong>${key}:</strong> ${data[key]}</div>`;
+            }
+          }
+          openModal('genericModal', 'Order Details', html);
         }
-      } else {
-        handleError(cardElement, "Error fetching inventory data");
       }
-    }
-  };
-  request.send();
-}
-
-// Display inventory results
-function showInventoryResults(inventoryData, elementID) {
-  let cardElement = document.getElementById(elementID);
-  if (!cardElement) return;
-  
-  let inventoryHtml = '';
-  inventoryData.forEach(item => {
-    inventoryHtml += `
-      <div class="card">
-        <div class="card-header product">
-          <div>
-            <span class="card-title">${item.ProductName}</span>
-            <span class="card-status">(SKU: ${item.SKU})</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="grid-container">
-            <div><b>Available:</b> ${item.Available}</div>
-            <div><b>On Hand:</b> ${item.OnHand}</div>
-            <div><b>Allocated:</b> ${item.Allocated}</div>
-            <div><b>Location:</b> ${item.Location || 'N/A'}</div>
-          </div>
-        </div>
-      </div>
-    `;
-  });
-  
-  cardElement.innerHTML = `
-    <div class="card-header">
-      <div>
-        <span class="card-title">Inventory Results</span>
-        <span class="card-status">(${inventoryData.length} items)</span>
-      </div>
-      <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
-    </div>
-    <div class="card-body">
-      ${inventoryHtml}
-    </div>`;
-}
-
-// Initialize the app
-function init() {
-  getBoth();
-  document.getElementById("OrderSearchBox").focus();
-}
-
-// Call init when the app loads
-init();
+      
+      // Format object for display
+      function formatObjectForDisplay(obj) {
+        let html = '';
+        if (Array.isArray(obj)) {
+          obj.forEach((item, index) => {
+            html += `<details>
+              <summary>Item ${index + 1}</summary>
+              <div style="padding-left: 20px;">
+                ${typeof item === 'object' ? formatObjectForDisplay(item) : item}
+              </div>
+            </details>`;
+          });
+        } else {
+          for (const key in obj) {
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+              html += `<details>
+                <summary>${key}</summary>
+                <div style="padding-left: 20px;">
+                  ${formatObjectForDisplay(obj[key])}
+                </div>
+              </details>`;
+            } else {
+              html += `<div><strong>${key}:</strong> ${obj[key]}</div>`;
+            }
+          }
+        }
+        return html;
+      }
+      
+      // Show attachments
+      function showAttachments(elementID) {
+        const data = orderDetails[elementID];
+        if (data && data.Attachments && data.Attachments.length > 0) {
+          let html = data.Attachments.map(att => `
+            <div class="attachment-item">
+              <a href="${att.DownloadUrl}" target="_blank"><i class="fa fa-file"></i> ${decodeURI(att.FileName)}</a>
+            </div>
+          `).join('');
+          openModal('genericModal', 'Attachments', html);
+        } else {
+          openModal('genericModal', 'Attachments', '<div class="no-results">No attachments found</div>');
+        }
+      }
+      
+      // Create draft email from order
+      function createDraftFromOrder(elementID) {
+        const data = orderDetails[elementID];
+        if (data) {
+          let subject, body, email;
+          
+          if (data.Customer) { // Sale order
+            subject = `Re: Sale Order ${data.Order.SaleOrderNumber}`;
+            email = data.CustomerEmail || '';
+            body = `Dear ${data.Customer},\n\nRegarding your order ${data.Order.SaleOrderNumber} with a total of ${data.Order.Total} ${data.CustomerCurrency}.\n\nOrder Status: ${data.Status}\n\nPlease let me know if you have any questions.\n\nBest regards,`;
+          } else { // Purchase order
+            subject = `Re: Purchase Order ${data.OrderNumber}`;
+            email = data.SupplierEmail || '';
+            body = `Dear ${data.Supplier},\n\nRegarding purchase order ${data.OrderNumber} with a total of ${data.Order.Total} ${data.SupplierCurrency}.\n\nOrder Status: ${data.Status}\n\nPlease let me know if you have any questions.\n\nBest regards,`;
+          }
+          
+          Missive.compose({
+            subject: subject,
+            body: body,
+            to: email
+          }).then(() => {
+            // Draft created successfully
+          }).catch(error => {
+            openModal('genericModal', 'Error', `Failed to create draft: ${error.message}`);
+          });
+        }
+      }
+      
+      // Load insights
+      function loadInsights() {
+        // Get current date for date range
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        
+        const formattedFirstDay = firstDay.toISOString().split('T')[0];
+        const formattedLastDay = lastDay.toISOString().split('T')[0];
+        
+        // Fetch sale orders for the month
+        let request = new XMLHttpRequest();
+        request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/saleList?FromDate=${formattedFirstDay}&ToDate=${formattedLastDay}`);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.setRequestHeader('api-auth-accountid', FIRST);
+        request.setRequestHeader('api-auth-applicationkey', SECOND);
+        request.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            let response = JSON.parse(this.responseText);
+            if (response.SaleList) {
+              let totalSales = response.SaleList.reduce((sum, sale) => sum + (sale.Total || 0), 0);
+              document.getElementById('totalSales').textContent = totalSales.toFixed(2);
+              
+              // Calculate trend compared to last month (placeholder)
+              document.getElementById('salesTrend').innerHTML = '<i class="fa fa-arrow-up"></i> 5.2% from last month';
+            }
+          }
+        };
+        request.send();
+        
+        // Fetch purchase orders for the month
+        let purchaseRequest = new XMLHttpRequest();
+        purchaseRequest.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/purchaseList?FromDate=${formattedFirstDay}&ToDate=${formattedLastDay}`);
+        purchaseRequest.setRequestHeader('Content-Type', 'application/json');
+        purchaseRequest.setRequestHeader('api-auth-accountid', FIRST);
+        purchaseRequest.setRequestHeader('api-auth-applicationkey', SECOND);
+        purchaseRequest.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            let response = JSON.parse(this.responseText);
+            if (response.PurchaseList) {
+              let totalPurchases = response.PurchaseList.reduce((sum, purchase) => sum + (purchase.Total || 0), 0);
+              document.getElementById('totalPurchases').textContent = totalPurchases.toFixed(2);
+              
+              // Calculate trend compared to last month (placeholder)
+              document.getElementById('purchasesTrend').innerHTML = '<i class="fa fa-arrow-up"></i> 3.8% from last month';
+            }
+          }
+        };
+        purchaseRequest.send();
+        
+        // Get count of pending orders
+        let pendingRequest = new XMLHttpRequest();
+        pendingRequest.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/saleList?Status=Pending');
+        pendingRequest.setRequestHeader('Content-Type', 'application/json');
+        pendingRequest.setRequestHeader('api-auth-accountid', FIRST);
+        pendingRequest.setRequestHeader('api-auth-applicationkey', SECOND);
+        pendingRequest.onreadystatechange = function () {
+          if (this.readyState === 4 && this.status === 200) {
+            let response = JSON.parse(this.responseText);
+            if (response.SaleList) {
+              document.getElementById('pendingOrdersCount').textContent = response.SaleList.length;
+            }
+          }
+        };
+        pendingRequest.send();
+        
+        // Placeholder for low stock items
+        document.getElementById('lowStockCount').textContent = '6';
+      }
+      
+      // Search function with debounce
+      function searchOrder(toSearch) {
+        if (isSearching) return;
+        isSearching = true;
+        toSearch = toSearch.trim().toUpperCase();
+        const randID = Math.random().toString(16).substr(2, 8);
+        const resultsContainer = document.getElementById("OrderSearchResults");
+        const cardHTML = `<div id="${randID}" class="card"><div class="card-header"><span class="card-title">${toSearch}</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="loading">Searching...</div></div></div>`;
+        resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+        
+        if (toSearch.startsWith('S')) {
+          DEAR_searchSale(toSearch, randID);
+        } else if (toSearch.startsWith('P')) {
+          DEAR_searchPurchase(toSearch, randID);
+        } else {
+          isSearching = false;
+          handleError(document.getElementById(randID), "Please start with 'S' for Sale or 'P' for Purchase");
+        }
+      }
+      
+      // Debounce function
+      function debounce(func, wait) {
+        return function(...args) {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+      
+      // Initialize the app
+      function init() {
+        console.log("Initializing DEAR Systems integration...");
+        getBoth();
+        document.getElementById("OrderSearchBox").focus();
+        
+        // Set up Missive conversation change listener
+        Missive.on('change:conversations', (ids) => {
+          console.log("Conversation changed, IDs:", ids);
+          Missive.fetchConversations(ids).then((conversations) => {
+            if (conversations.length !== 1) return;
+            
+            getBoth();
+            const subject = conversations[0].subject;
+            console.log("Current conversation subject:", subject);
+            
+            // Display the subject
+            const subjectDisplayDiv = document.getElementById('subjectDisplay');
+            if (subjectDisplayDiv) {
+              subjectDisplayDiv.textContent = subject;
+            }
+            
+            // Extract order numbers from subject
+            const orderPattern = /[SP]\d+G/g;
+            const orders = subject.match(orderPattern) || [];
+            const orderButtonsDiv = document.getElementById('orderButtons');
+            if (orderButtonsDiv) {
+              orderButtonsDiv.innerHTML = '';
+              
+              orders.forEach(order => {
+                const button = document.createElement('button');
+                button.className = 'order-button';
+                button.textContent = order;
+                button.onclick = () => searchOrder(order);
+                orderButtonsDiv.appendChild(button);
+              });
+            }
+            
+            // Extract customer/supplier names for quick search
+            if (conversations[0].aliases && conversations[0].aliases.length > 0) {
+              const emails = conversations[0].aliases.map(alias => alias.email);
+              if (emails.length > 0) {
+                // Check if email matches any customer or supplier
+                setTimeout(() => {
+                  checkEmailsForContacts(emails);
+                }, 500);
+              }
+            }
+          }).catch(error => {
+            console.error("Error fetching conversations:", error);
+          });
+        });
+      }
+      
+      // Debug helper function
+      window.debugDearIntegration = function() {
+        console.log("FIRST key available:", !!FIRST);
+        console.log("SECOND key available:", !!SECOND);
+        console.log("Active tab:", activeTab);
+        console.log("Order details:", Object.keys(orderDetails).length);
+        console.log("Product details:", Object.keys(productDetails).length);
+        console.log("Customer details:", Object.keys(customerDetails).length);
+        console.log("Supplier details:", Object.keys(supplierDetails).length);
+      };
+    </script>
+  </body>
+</html>
