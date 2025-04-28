@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Order Search</title>
+    <title>DEAR Systems Manager</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
-    <meta name="description" content="Search DEAR Systems sale and purchase orders within Missive">
+    <meta name="description" content="Comprehensive DEAR Systems integration for Missive">
     <link rel="stylesheet" href="https://integrations.missiveapp.com/missive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://integrations.missiveapp.com/missive.js"></script>
@@ -14,6 +14,7 @@
         --primary-dark: #00796b;
         --primary-darker: #00695c;
         --primary-light: #e0f2f1;
+        --accent-color: #ff5722;
         --text-primary: #212529;
         --text-secondary: #495057;
         --text-light: #6c757d;
@@ -22,12 +23,14 @@
         --border-color: #dee2e6;
         --sale-bg: #e8f5e9;
         --purchase-bg: #ffe5e5;
-        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+        --product-bg: #e3f2fd;
+        --customer-bg: #fff8e1;
         --radius-sm: 4px;
         --radius-md: 8px;
         --radius-lg: 12px;
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
       }
       
       body {
@@ -35,7 +38,6 @@
         margin: 0;
         padding: 16px;
         background-color: var(--bg-color);
-        user-select: text;
         color: var(--text-primary);
         line-height: 1.5;
       }
@@ -53,32 +55,39 @@
         border-left: 4px solid var(--primary-color);
       }
       
-      #orderButtons {
-        margin-bottom: 16px;
+      .tab-container {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 16px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       
-      .order-button {
-        padding: 6px 12px;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: var(--radius-sm);
+      .tab {
+        padding: 12px 16px;
         cursor: pointer;
-        font-size: 13px;
         font-weight: 500;
-        transition: background-color 0.2s, transform 0.1s;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
       }
       
-      .order-button:hover {
-        background-color: var(--primary-dark);
-        transform: translateY(-1px);
+      .tab:hover {
+        color: var(--primary-color);
       }
       
-      .order-button:active {
-        transform: translateY(0);
+      .tab.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+      }
+      
+      .tab-content {
+        display: none;
+      }
+      
+      .tab-content.active {
+        display: block;
       }
       
       .search-container {
@@ -116,10 +125,6 @@
         transition: color 0.2s;
       }
       
-      .clear-button:hover {
-        color: var(--text-primary);
-      }
-      
       .search-button {
         margin-top: 8px;
         padding: 12px;
@@ -132,7 +137,7 @@
         font-size: 15px;
         font-weight: 500;
         text-align: center;
-        transition: background-color 0.2s, transform 0.1s;
+        transition: all 0.2s;
         box-shadow: var(--shadow-sm);
       }
       
@@ -141,17 +146,13 @@
         transform: translateY(-1px);
       }
       
-      .search-button:active {
-        transform: translateY(0);
-      }
-      
       .result-container {
         max-height: 80vh;
         overflow-y: auto;
         padding: 4px;
       }
       
-      .order-card {
+      .card {
         background-color: var(--card-bg);
         border-radius: var(--radius-md);
         box-shadow: var(--shadow-md);
@@ -164,18 +165,7 @@
         border: 1px solid var(--border-color);
       }
       
-      @keyframes fadeInUp {
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      
-      .order-card:hover {
-        box-shadow: var(--shadow-lg);
-      }
-      
-      .order-header {
+      .card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -184,77 +174,91 @@
         font-weight: 600;
       }
       
-      .order-header.sale {
+      .card-header.sale {
         background-color: var(--sale-bg);
         border-left: 4px solid #4caf50;
       }
       
-      .order-header.purchase {
+      .card-header.purchase {
         background-color: var(--purchase-bg);
         border-left: 4px solid #f44336;
       }
       
-      .order-title {
+      .card-header.product {
+        background-color: var(--product-bg);
+        border-left: 4px solid #2196f3;
+      }
+      
+      .card-header.customer {
+        background-color: var(--customer-bg);
+        border-left: 4px solid #ffc107;
+      }
+      
+      .card-title {
         font-size: 16px;
         color: var(--text-primary);
       }
       
-      .order-status {
+      .card-status {
         font-size: 13px;
         color: var(--text-light);
         margin-left: 8px;
         font-weight: normal;
       }
       
-      .close-button {
-        cursor: pointer;
-        font-size: 18px;
-        color: var(--text-light);
-        transition: color 0.2s;
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-      }
-      
-      .close-button:hover {
-        color: #dc3545;
-        background-color: rgba(220, 53, 69, 0.1);
-      }
-      
-      .order-details {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        font-size: 14px;
-        color: var(--text-secondary);
+      .card-body {
         padding: 16px;
       }
       
-      .order-details div {
-        display: flex;
-        flex-direction: column;
-      }
-      
-      .order-details b {
-        color: var(--text-primary);
-        margin-bottom: 2px;
-      }
-      
-      .invoice-section {
-        grid-column: span 2;
-        padding-top: 12px;
-        border-top: 1px solid var(--border-color);
-        margin-top: 4px;
-      }
-      
-      .invoice-item {
-        margin-bottom: 12px;
-        padding: 10px;
-        background-color: rgba(0, 0, 0, 0.03);
+      .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
         border-radius: var(--radius-sm);
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        text-decoration: none;
+      }
+      
+      .action-button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+      
+      .action-button i {
+        margin-right: 6px;
+      }
+      
+      .form-group {
+        margin-bottom: 16px;
+      }
+      
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+      
+      .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        transition: border-color 0.2s;
+      }
+      
+      .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
       }
       
       .loading {
@@ -281,267 +285,244 @@
         to { transform: rotate(360deg); }
       }
       
-      .no-results {
-        font-size: 14px;
-        color: var(--text-light);
-        text-align: center;
-        padding: 16px;
-      }
-      
-      .view-link {
-        grid-column: span 2;
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        font-size: 13px;
-        margin-top: 12px;
-        border-top: 1px solid var(--border-color);
-        padding-top: 12px;
-      }
-      
-      .view-link a, .view-link button, .view-link span {
-        color: white;
-        text-decoration: none;
-        cursor: pointer;
-        border: none;
-        border-radius: var(--radius-sm);
-        font-size: 13px;
-        padding: 8px 12px;
-        flex: 1;
-        text-align: center;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        font-weight: 500;
-      }
-      
-      .view-button-primary {
-        background: var(--primary-color);
-      }
-      
-      .view-button-secondary {
-        background: var(--primary-dark);
-      }
-      
-      .view-button-tertiary {
-        background: var(--primary-darker);
-      }
-      
-      .view-link a:hover, .view-link button:hover, .view-link span:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-sm);
-      }
-      
-      .view-link a:active, .view-link button:active, .view-link span:active {
-        transform: translateY(0);
-      }
-      
-      #orderPopup {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        backdrop-filter: blur(3px);
-      }
-      
-      #orderPopup > div {
-        background: var(--card-bg);
-        padding: 24px;
-        border-radius: var(--radius-lg);
-        max-width: 80%;
-        max-height: 80%;
-        overflow: auto;
-        position: relative;
-        box-shadow: var(--shadow-lg);
-      }
-      
-      #orderPopup button {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        background: #dc3545;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.2s;
-      }
-      
-      #orderPopup button:hover {
-        background: #c82333;
-      }
-      
-      #popupContent {
-        margin-top: 24px;
-        color: #000;
-      }
-      
-      #popupContent details {
-        margin-bottom: 12px;
-        color: #000;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        overflow: hidden;
-      }
-      
-      #popupContent summary {
-        cursor: pointer;
-        font-weight: bold;
-        color: #000;
-        padding: 10px;
-        background-color: #f8f9fa;
-        border-bottom: 1px solid var(--border-color);
-      }
-      
-      #popupContent summary:hover {
-        background-color: #e9ecef;
-      }
-      
-      #popupContent pre {
-        margin: 0;
-        padding: 12px 16px;
-        white-space: pre-wrap;
-        font-family: monospace;
-        font-size: 13px;
-        color: #000;
-      }
-      
-      #popupContent div {
-        color: #000;
-        padding: 4px 12px;
-      }
-      
-      #popupContent strong {
-        color: #000;
-      }
-      
-      .attachments-button {
-        cursor: pointer;
-        color: var(--primary-color);
-        font-size: 14px;
-      }
-      
-      .attachments-button:hover {
-        color: var(--primary-dark);
-      }
-      
-      #attachmentsPopup {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        backdrop-filter: blur(3px);
-      }
-      
-      #attachmentsPopup > div {
-        background: var(--card-bg);
-        padding: 24px;
-        border-radius: var(--radius-lg);
-        max-width: 80%;
-        max-height: 80%;
-        overflow: auto;
-        position: relative;
-        box-shadow: var(--shadow-lg);
-      }
-      
-      #attachmentsPopup button {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        background: #dc3545;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.2s;
-      }
-      
-      #attachmentsPopup button:hover {
-        background: #c82333;
-      }
-      
-      #attachmentsContent {
-        margin-top: 24px;
-      }
-      
-      .attachment-item {
-        margin-bottom: 12px;
-        padding: 10px 16px;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        background-color: #f8f9fa;
-        transition: background-color 0.2s;
-      }
-      
-      .attachment-item:hover {
-        background-color: #e9ecef;
-      }
-      
-      .attachment-item a {
-        color: var(--primary-color);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-      }
-      
-      .attachment-item a:before {
-        content: '\f15b';
-        font-family: FontAwesome;
-        margin-right: 8px;
-        color: var(--text-light);
-      }
-      
-      .attachment-item a:hover {
-        text-decoration: underline;
-      }
-      
-      @media (max-width: 480px) {
-        .order-details {
-          grid-template-columns: 1fr;
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        .view-link {
-          flex-direction: column;
+      }
+      
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      
+      .stats-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      
+      .stat-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .stat-title {
+        font-size: 14px;
+        color: var(--text-light);
+        margin-bottom: 8px;
+      }
+      
+      .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      
+      .stat-trend {
+        margin-top: 8px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+      }
+      
+      .trend-up {
+        color: #4caf50;
+      }
+      
+      .trend-down {
+        color: #f44336;
+      }
+      
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      .badge-success {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+      }
+      
+      .badge-warning {
+        background-color: #fff8e1;
+        color: #f57f17;
+      }
+      
+      .badge-danger {
+        background-color: #ffebee;
+        color: #c62828;
+      }
+      
+      .badge-info {
+        background-color: #e3f2fd;
+        color: #1565c0;
+      }
+      
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(3px);
+      }
+      
+      .modal-content {
+        background: var(--card-bg);
+        padding: 24px;
+        border-radius: var(--radius-lg);
+        max-width: 80%;
+        max-height: 80%;
+        overflow: auto;
+        position: relative;
+        box-shadow: var(--shadow-lg);
+      }
+      
+      .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+      
+      .modal-close:hover {
+        background: #c82333;
+      }
+      
+      .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--text-primary);
+      }
+      
+      @media (max-width: 768px) {
+        .stats-container {
+          grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
     <div id="subjectDisplay"></div>
-    <div id="orderButtons"></div>
-    <div class="search-container">
-      <input id="OrderSearchBox" class="search-box" placeholder="Search Sale (S...) or Purchase (P...) Order" autocorrect="off" autocomplete="off" type="search" name="order" aria-label="Search for sale or purchase order">
-      <span class="clear-button fa fa-times" onclick="clearSearch()" aria-label="Clear search"></span>
+    
+    <div class="tab-container">
+      <div class="tab active" onclick="switchTab('orders')"><i class="fa fa-shopping-cart"></i> Orders</div>
+      <div class="tab" onclick="switchTab('products')"><i class="fa fa-cube"></i> Products</div>
+      <div class="tab" onclick="switchTab('customers')"><i class="fa fa-users"></i> Customers</div>
+      <div class="tab" onclick="switchTab('suppliers')"><i class="fa fa-truck"></i> Suppliers</div>
+      <div class="tab" onclick="switchTab('inventory')"><i class="fa fa-cubes"></i> Inventory</div>
+      <div class="tab" onclick="switchTab('insights')"><i class="fa fa-bar-chart"></i> Insights</div>
     </div>
-    <div id="OrderSearchButton" class="search-button">Search</div>
-    <div id="OrderSearchResults" class="result-container"></div>
-    <div id="orderPopup">
-      <div>
-        <button onclick="closePopup()">Close</button>
-        <div id="popupContent"></div>
+    
+    <!-- Orders Tab -->
+    <div id="orders" class="tab-content active">
+      <div id="orderButtons"></div>
+      <div class="search-container">
+        <input id="OrderSearchBox" class="search-box" placeholder="Search Sale (S...) or Purchase (P...) Order" autocorrect="off" autocomplete="off" type="search" name="order" aria-label="Search for sale or purchase order">
+        <span class="clear-button fa fa-times" onclick="clearSearch('OrderSearchBox')" aria-label="Clear search"></span>
       </div>
+      <div id="OrderSearchButton" class="search-button">Search</div>
+      <div id="OrderSearchResults" class="result-container"></div>
     </div>
-    <div id="attachmentsPopup">
-      <div>
-        <button onclick="closeAttachmentsPopup()">Close</button>
-        <div id="attachmentsContent"></div>
+    
+    <!-- Products Tab -->
+    <div id="products" class="tab-content">
+      <div class="search-container">
+        <input id="ProductSearchBox" class="search-box" placeholder="Search products by name, SKU, or barcode" autocorrect="off" autocomplete="off" type="search" name="product" aria-label="Search for products">
+        <span class="clear-button fa fa-times" onclick="clearSearch('ProductSearchBox')" aria-label="Clear search"></span>
+      </div>
+      <div id="ProductSearchButton" class="search-button">Search Products</div>
+      <div id="ProductSearchResults" class="result-container"></div>
+    </div>
+    
+    <!-- Customers Tab -->
+    <div id="customers" class="tab-content">
+      <div class="search-container">
+        <input id="CustomerSearchBox" class="search-box" placeholder="Search customers by name, email, or phone" autocorrect="off" autocomplete="off" type="search" name="customer" aria-label="Search for customers">
+        <span class="clear-button fa fa-times" onclick="clearSearch('CustomerSearchBox')" aria-label="Clear search"></span>
+      </div>
+      <div id="CustomerSearchButton" class="search-button">Search Customers</div>
+      <div id="CustomerSearchResults" class="result-container"></div>
+    </div>
+    
+    <!-- Suppliers Tab -->
+    <div id="suppliers" class="tab-content">
+      <div class="search-container">
+        <input id="SupplierSearchBox" class="search-box" placeholder="Search suppliers by name, email, or phone" autocorrect="off" autocomplete="off" type="search" name="supplier" aria-label="Search for suppliers">
+        <span class="clear-button fa fa-times" onclick="clearSearch('SupplierSearchBox')" aria-label="Clear search"></span>
+      </div>
+      <div id="SupplierSearchButton" class="search-button">Search Suppliers</div>
+      <div id="SupplierSearchResults" class="result-container"></div>
+    </div>
+    
+    <!-- Inventory Tab -->
+    <div id="inventory" class="tab-content">
+      <div class="search-container">
+        <input id="InventorySearchBox" class="search-box" placeholder="Search inventory by location or product" autocorrect="off" autocomplete="off" type="search" name="inventory" aria-label="Search for inventory">
+        <span class="clear-button fa fa-times" onclick="clearSearch('InventorySearchBox')" aria-label="Clear search"></span>
+      </div>
+      <div id="InventorySearchButton" class="search-button">Search Inventory</div>
+      <div id="InventorySearchResults" class="result-container"></div>
+    </div>
+    
+    <!-- Insights Tab -->
+    <div id="insights" class="tab-content">
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-title">Total Sales (This Month)</div>
+          <div class="stat-value" id="totalSales">-</div>
+          <div class="stat-trend trend-up" id="salesTrend"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Total Purchases (This Month)</div>
+          <div class="stat-value" id="totalPurchases">-</div>
+          <div class="stat-trend trend-up" id="purchasesTrend"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Low Stock Items</div>
+          <div class="stat-value" id="lowStockCount">-</div>
+          <div id="viewLowStock" class="action-button"><i class="fa fa-eye"></i> View Items</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Pending Orders</div>
+          <div class="stat-value" id="pendingOrdersCount">-</div>
+          <div id="viewPendingOrders" class="action-button"><i class="fa fa-list"></i> View Orders</div>
+        </div>
+      </div>
+      
+      <div id="insightsCharts"></div>
+    </div>
+    
+    <!-- Generic Modal -->
+    <div id="genericModal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal('genericModal')">Close</button>
+        <div class="modal-title" id="modalTitle"></div>
+        <div id="modalContent"></div>
       </div>
     </div>
 
@@ -551,170 +532,107 @@
       let SECOND = "";
       let SALE_RAW_URL = "https://inventory.dearsystems.com/Sale#";
       let PURCHASE_RAW_URL = "https://inventory.dearsystems.com/Purchase#";
+      let PRODUCT_RAW_URL = "https://inventory.dearsystems.com/Product#";
+      let CUSTOMER_RAW_URL = "https://inventory.dearsystems.com/Customer#";
+      let SUPPLIER_RAW_URL = "https://inventory.dearsystems.com/Supplier#";
       let isSearching = false;
       let searchTimeout;
       let orderDetails = {};
-
+      let productDetails = {};
+      let customerDetails = {};
+      let supplierDetails = {};
+      let activeTab = 'orders';
+      
       // Key retrieval
       function getFirst() {
         Missive.fetchLabels('1ce404d3-6bad-4753-b29d-53daf66a7fc6').then((first) => {
           FIRST = first.name;
         });
       }
+      
       function getSecond() {
         Missive.fetchLabels('9f2f1903-60fa-4e08-84a4-5f3ed0dd765b').then((second) => {
           SECOND = second.name;
         });
       }
+      
       function getBoth() {
         if (!FIRST) { getFirst(); }
         if (!SECOND) { getSecond(); }
       }
-
+      
+      // Clear search input
+      function clearSearch(inputId) {
+        document.getElementById(inputId).value = "";
+        document.getElementById(inputId).focus();
+      }
+      
+      // Tab switching
+      function switchTab(tabId) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        
+        // Deactivate all tab buttons
+        document.querySelectorAll('.tab').forEach(button => {
+          button.classList.remove('active');
+        });
+        
+        // Activate the selected tab
+        document.getElementById(tabId).classList.add('active');
+        
+        // Activate the tab button
+        document.querySelectorAll('.tab').forEach(button => {
+          if (button.textContent.toLowerCase().includes(tabId.toLowerCase())) {
+            button.classList.add('active');
+          }
+        });
+        
+        activeTab = tabId;
+        
+        // Load data for the active tab if needed
+        if (tabId === 'insights') {
+          loadInsights();
+        }
+      }
+      
       // Helper function for error handling
       function handleError(cardElement, message) {
         if (cardElement) {
-          cardElement.innerHTML = `<div class="order-header"><span class="order-title">Error</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="order-details"><div class="no-results">${message}</div></div>`;
+          cardElement.innerHTML = `<div class="card-header"><span class="card-title">Error</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="no-results">${message}</div></div>`;
         }
       }
-
-      // Display sale order
-      function showSale(sale, elementID) {
-        orderDetails[elementID] = sale;
-        let invoices = sale.Invoices.map(inv => `
-          <div class="invoice-item">
-            <b>Invoice#${inv.InvoiceNumber} (${inv.Status})</b><br>
-            Amount: ${inv.Total} ${sale.BaseCurrency}<br>
-            Paid: ${inv.Paid} ${sale.CustomerCurrency}
-          </div>
-        `).join('');
-        
-        let attachmentsButton = sale.Attachments && sale.Attachments.length > 0 ? `<span class="attachments-button fa fa-paperclip view-button-tertiary" onclick="showAttachmentsPopup('${elementID}')" aria-label="View attachments">Attachments</span>` : '';
-        
-        let cardElement = document.getElementById(elementID);
-        if (cardElement) {
-          cardElement.innerHTML = `
-            <div class="order-header sale">
-              <div>
-                <span class="order-title">Sale Order: ${sale.Order.SaleOrderNumber}</span>
-                <span class="order-status">(${sale.Status})</span>
-              </div>
-              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
-            </div>
-            <div class="order-details">
-              <div><b>Customer:</b> ${sale.Customer}</div>
-              <div><b>Order Status:</b> ${sale.Order.Status}</div>
-              <div><b>Total:</b> ${sale.Order.Total} ${sale.CustomerCurrency}</div>
-              <div><b>Quote:</b> ${sale.Quote.Status}</div>
-              ${invoices ? `<div class="invoice-section">${invoices}</div>` : ''}
-              <div class="view-link">
-                <a href="${SALE_RAW_URL}${sale.ID}" class="view-button-primary" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
-                <button onclick="showPopup('${elementID}')" class="view-button-secondary" aria-label="Show order details"><i class="fa fa-list-alt"></i> Show Details</button>
-                ${attachmentsButton}
-              </div>
-            </div>`;
-        }
+      
+      // Modal handling
+      function openModal(modalId, title, content) {
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalContent').innerHTML = content;
+        document.getElementById(modalId).style.display = 'flex';
       }
-
-      // Display purchase order
-      function showPurchase(purchase, elementID) {
-        orderDetails[elementID] = purchase;
-        let attachmentsButton = purchase.Attachments && purchase.Attachments.length > 0 ? `<span class="attachments-button fa fa-paperclip view-button-tertiary" onclick="showAttachmentsPopup('${elementID}')" aria-label="View attachments">Attachments</span>` : '';
-        
-        let cardElement = document.getElementById(elementID);
-        if (cardElement) {
-          cardElement.innerHTML = `
-            <div class="order-header purchase">
-              <div>
-                <span class="order-title">Purchase Order: ${purchase.OrderNumber}</span>
-                <span class="order-status">(${purchase.Status})</span>
-              </div>
-              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
-            </div>
-            <div class="order-details">
-              <div><b>Supplier:</b> ${purchase.Supplier}</div>
-              <div><b>Order Status:</b> ${purchase.Order.Status}</div>
-              <div><b>Total:</b> ${purchase.Order.Total} ${purchase.SupplierCurrency}</div>
-              ${purchase.Type === "Advanced Purchase" ? `<div><b>Type:</b> ${purchase.Type}</div>` : ''}
-              <div class="view-link">
-                <a href="${PURCHASE_RAW_URL}${purchase.ID}" class="view-button-primary" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
-                <button onclick="showPopup('${elementID}')" class="view-button-secondary" aria-label="Show order details"><i class="fa fa-list-alt"></i> Show Details</button>
-                ${attachmentsButton}
-              </div>
-            </div>`;
-        }
+      
+      function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
       }
-
+      
       // Close card and clean up data
       function closeThis(th) {
-        const card = th.closest('.order-card');
+        const card = th.closest('.card');
         const id = card.id;
-        delete orderDetails[id];
+        
+        if (orderDetails[id]) {
+          delete orderDetails[id];
+        } else if (productDetails[id]) {
+          delete productDetails[id];
+        } else if (customerDetails[id]) {
+          delete customerDetails[id];
+        } else if (supplierDetails[id]) {
+          delete supplierDetails[id];
+        }
+        
         card.remove();
       }
-
-      // Show popup with order details
-      function showPopup(elementID) {
-        const data = orderDetails[elementID];
-        if (data) {
-          const popupContent = document.getElementById('popupContent');
-          popupContent.innerHTML = jsonToHtml(data);
-          document.getElementById('orderPopup').style.display = 'flex';
-        }
-      }
-
-      // Convert JSON to collapsible HTML
-      function jsonToHtml(json) {
-        if (typeof json !== 'object' || json === null) {
-          return `<pre>${JSON.stringify(json, null, 2)}</pre>`;
-        }
-        let html = '';
-        for (const key in json) {
-          if (json.hasOwnProperty(key)) {
-            const value = json[key];
-            if (typeof value === 'object' && value !== null) {
-              html += `<details><summary>${key}</summary>${jsonToHtml(value)}</details>`;
-            } else {
-              html += `<div><strong>${key}:</strong> ${value}</div>`;
-            }
-          }
-        }
-        return html;
-      }
-
-      // Close popup
-      function closePopup() {
-        document.getElementById('orderPopup').style.display = 'none';
-      }
-
-      // Show attachments popup
-      function showAttachmentsPopup(elementID) {
-        const data = orderDetails[elementID];
-        if (data && data.Attachments && data.Attachments.length > 0) {
-          let attachmentsHtml = data.Attachments.map(att => `
-            <div class="attachment-item">
-              <a href="${att.DownloadUrl}" target="_blank">${decodeURI(att.FileName)}</a>
-            </div>
-          `).join('');
-          document.getElementById('attachmentsContent').innerHTML = attachmentsHtml;
-          document.getElementById('attachmentsPopup').style.display = 'flex';
-        } else {
-          document.getElementById('attachmentsContent').innerHTML = '<div class="no-results">No attachments found</div>';
-          document.getElementById('attachmentsPopup').style.display = 'flex';
-        }
-      }
-
-      // Close attachments popup
-      function closeAttachmentsPopup() {
-        document.getElementById('attachmentsPopup').style.display = 'none';
-      }
-
-      // Clear search input
-      function clearSearch() {
-        document.getElementById("OrderSearchBox").value = "";
-        document.getElementById("OrderSearchBox").focus();
-      }
-
+      
       // DEAR API call to search sale
       function DEAR_searchSale(toSearch, randID) {
         let request = new XMLHttpRequest();
@@ -728,7 +646,7 @@
             let cardElement = document.getElementById(randID);
             if (this.status === 200) {
               let SO = JSON.parse(this.responseText);
-              if (SO.SaleList.length > 0) {
+              if (SO.SaleList && SO.SaleList.length > 0) {
                 let SOID = SO.SaleList[0].SaleID;
                 DEAR_getSale(SOID, randID);
               } else {
@@ -741,7 +659,7 @@
         };
         request.send();
       }
-
+      
       // DEAR API call to get sale details
       function DEAR_getSale(Sale_ID, eleID) {
         let request = new XMLHttpRequest();
@@ -762,7 +680,48 @@
         };
         request.send();
       }
-
+      
+      // Display sale order
+      function showSale(sale, elementID) {
+        orderDetails[elementID] = sale;
+        let invoices = sale.Invoices && sale.Invoices.map ? sale.Invoices.map(inv => `
+          <div class="invoice-item">
+            <b>Invoice#${inv.InvoiceNumber} (${inv.Status})</b><br>
+            Amount: ${inv.Total} ${sale.BaseCurrency}<br>
+            Paid: ${inv.Paid} ${sale.CustomerCurrency}
+          </div>
+        `).join('') : '';
+        
+        let attachmentsButton = sale.Attachments && sale.Attachments.length > 0 ? `<button class="action-button" onclick="showAttachments('${elementID}')"><i class="fa fa-paperclip"></i> Attachments</button>` : '';
+        
+        let cardElement = document.getElementById(elementID);
+        if (cardElement) {
+          cardElement.innerHTML = `
+            <div class="card-header sale">
+              <div>
+                <span class="card-title">Sale Order: ${sale.Order.SaleOrderNumber}</span>
+                <span class="card-status">(${sale.Status})</span>
+              </div>
+              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
+            </div>
+            <div class="card-body">
+              <div class="grid-container">
+                <div><b>Customer:</b> ${sale.Customer}</div>
+                <div><b>Order Status:</b> ${sale.Order.Status}</div>
+                <div><b>Total:</b> ${sale.Order.Total} ${sale.CustomerCurrency}</div>
+                <div><b>Quote:</b> ${sale.Quote ? sale.Quote.Status : 'N/A'}</div>
+              </div>
+              ${invoices ? `<div class="invoice-section">${invoices}</div>` : ''}
+              <div class="action-buttons">
+                <a href="${SALE_RAW_URL}${sale.ID}" class="action-button" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
+                <button class="action-button" onclick="showOrderDetails('${elementID}')"><i class="fa fa-list-alt"></i> Show Details</button>
+                ${attachmentsButton}
+                <button class="action-button" onclick="createDraftFromOrder('${elementID}')"><i class="fa fa-envelope"></i> Create Draft</button>
+              </div>
+            </div>`;
+        }
+      }
+      
       // DEAR API call to search purchase
       function DEAR_searchPurchase(toSearch, randID) {
         let request = new XMLHttpRequest();
@@ -776,7 +735,7 @@
             let cardElement = document.getElementById(randID);
             if (this.status === 200) {
               let PO = JSON.parse(this.responseText);
-              if (PO.PurchaseList.length > 0) {
+              if (PO.PurchaseList && PO.PurchaseList.length > 0) {
                 let POID = PO.PurchaseList[0].ID;
                 if (PO.PurchaseList[0].Type === "Advanced Purchase") {
                   DEAR_getAdvancedPurchase(POID, randID);
@@ -793,7 +752,7 @@
         };
         request.send();
       }
-
+      
       // DEAR API call to get purchase details
       function DEAR_getPurchase(Purchase_ID, eleID) {
         let request = new XMLHttpRequest();
@@ -814,7 +773,7 @@
         };
         request.send();
       }
-
+      
       // DEAR API call to get advanced purchase details
       function DEAR_getAdvancedPurchase(Purchase_ID, eleID) {
         let request = new XMLHttpRequest();
@@ -835,74 +794,736 @@
         };
         request.send();
       }
-
-      // Search function with debounce
-      function searchOrder(toSearch) {
+      
+      // Display purchase order
+      function showPurchase(purchase, elementID) {
+        orderDetails[elementID] = purchase;
+        let attachmentsButton = purchase.Attachments && purchase.Attachments.length > 0 ? `<button class="action-button" onclick="showAttachments('${elementID}')"><i class="fa fa-paperclip"></i> Attachments</button>` : '';
+        
+        let cardElement = document.getElementById(elementID);
+        if (cardElement) {
+          cardElement.innerHTML = `
+            <div class="card-header purchase">
+              <div>
+                <span class="card-title">Purchase Order: ${purchase.OrderNumber}</span>
+                <span class="card-status">(${purchase.Status})</span>
+              </div>
+              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
+            </div>
+            <div class="card-body">
+              <div class="grid-container">
+                <div><b>Supplier:</b> ${purchase.Supplier}</div>
+                <div><b>Order Status:</b> ${purchase.Order.Status}</div>
+                <div><b>Total:</b> ${purchase.Order.Total} ${purchase.SupplierCurrency}</div>
+                ${purchase.Type === "Advanced Purchase" ? `<div><b>Type:</b> ${purchase.Type}</div>` : ''}
+              </div>
+              <div class="action-buttons">
+                <a href="${PURCHASE_RAW_URL}${purchase.ID}" class="action-button" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
+                <button class="action-button" onclick="showOrderDetails('${elementID}')"><i class="fa fa-list-alt"></i> Show Details</button>
+                ${attachmentsButton}
+                <button class="action-button" onclick="createDraftFromOrder('${elementID}')"><i class="fa fa-envelope"></i> Create Draft</button>
+              </div>
+            </div>`;
+        }
+      }
+      
+      // Search for products
+      function searchProduct(toSearch) {
         if (isSearching) return;
         isSearching = true;
-        toSearch = toSearch.trim().toUpperCase();
+        
         const randID = Math.random().toString(16).substr(2, 8);
-        const resultsContainer = document.getElementById("OrderSearchResults");
-        const cardHTML = `<div id="${randID}" class="order-card"><div class="order-header"><span class="order-title">${toSearch}</span><span class="order-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="order-details"><div class="loading">Searching...</div></div></div>`;
+        const resultsContainer = document.getElementById("ProductSearchResults");
+        const cardHTML = `<div id="${randID}" class="card"><div class="card-header"><span class="card-title">${toSearch}</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="loading">Searching...</div></div></div>`;
         resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
         
-        if (toSearch.startsWith('S')) {
-          DEAR_searchSale(toSearch, randID);
-        } else if (toSearch.startsWith('P')) {
-          DEAR_searchPurchase(toSearch, randID);
-        } else {
-          isSearching = false;
-          handleError(document.getElementById(randID), "Please start with 'S' for Sale or 'P' for Purchase");
-        }
-      }
-
-      // Debounce function
-      function debounce(func, wait) {
-        return function(...args) {
-          clearTimeout(searchTimeout);
-          searchTimeout = setTimeout(() => func.apply(this, args), wait);
+        let request = new XMLHttpRequest();
+        request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/product?Name=${encodeURIComponent(toSearch)}`);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.setRequestHeader('api-auth-accountid', FIRST);
+        request.setRequestHeader('api-auth-applicationkey', SECOND);
+        request.onreadystatechange = function () {
+          if (this.readyState === 4) {
+            isSearching = false;
+            let cardElement = document.getElementById(randID);
+            if (this.status === 200) {
+              let response = JSON.parse(this.responseText);
+              if (response.Products && response.Products.length > 0) {
+                showProduct(response.Products[0], randID);
+              } else {
+                handleError(cardElement, "No products found");
+              }
+            } else {
+              handleError(cardElement, "Error fetching product details");
+            }
+          }
         };
+        request.send();
       }
-
-      // Event listeners
-      Missive.on('change:conversations', (ids) => {
-        Missive.fetchConversations(ids).then((conversations) => {
-          if (conversations.length !== 1) return;
-          getBoth();
-          const subject = conversations[0].subject;
-          
-          // Display the subject
-          const subjectDisplayDiv = document.getElementById('subjectDisplay');
-          subjectDisplayDiv.textContent = subject;
-          
-          const orderPattern = /[SP]\d+G/g;
-          const orders = subject.match(orderPattern) || [];
-          const orderButtonsDiv = document.getElementById('orderButtons');
-          orderButtonsDiv.innerHTML = '';
-          orders.forEach(order => {
-            const button = document.createElement('button');
-            button.className = 'order-button';
-            button.textContent = order;
-            button.onclick = () => searchOrder(order);
-            orderButtonsDiv.appendChild(button);
-          });
-        });
-      });
-
-      document.getElementById("OrderSearchButton").onclick = function() {
-        const searchValue = document.getElementById("OrderSearchBox").value;
-        if (searchValue) searchOrder(searchValue);
-      };
-
-      document.getElementById("OrderSearchBox").addEventListener('keypress', debounce(function(e) {
-        if (e.key === 'Enter') {
-          const searchValue = this.value;
-          if (searchValue) searchOrder(searchValue);
+      
+      // Display product
+      function showProduct(product, elementID) {
+        productDetails[elementID] = product;
+        
+        let cardElement = document.getElementById(elementID);
+        if (cardElement) {
+          cardElement.innerHTML = `
+            <div class="card-header product">
+              <div>
+                <span class="card-title">${product.Name}</span>
+                <span class="card-status">(SKU: ${product.SKU})</span>
+              </div>
+              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
+            </div>
+            <div class="card-body">
+              <div class="grid-container">
+                <div><b>Category:</b> ${product.Category || 'N/A'}</div>
+                <div><b>Brand:</b> ${product.Brand || 'N/A'}</div>
+                <div><b>Type:</b> ${product.Type || 'N/A'}</div>
+                <div><b>Status:</b> ${product.Status || 'N/A'}</div>
+              </div>
+              <div class="action-buttons">
+                <a href="${PRODUCT_RAW_URL}${product.ID}" class="action-button" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
+                <button class="action-button" onclick="showProductDetails('${elementID}')"><i class="fa fa-list-alt"></i> Show Details</button>
+                <button class="action-button" onclick="checkInventory('${elementID}')"><i class="fa fa-cubes"></i> Check Inventory</button>
+              </div>
+            </div>`;
         }
-      }, 300));
+      }
+      
+      // Search for customers
+      function searchCustomer(toSearch) {
+        if (isSearching) return;
+        isSearching = true;
+        
+        const randID = Math.random().toString(16).substr(2, 8);
+        const resultsContainer = document.getElementById("CustomerSearchResults");
+        const cardHTML = `<div id="${randID}" class="card"><div class="card-header"><span class="card-title">${toSearch}</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="loading">Searching...</div></div></div>`;
+        resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+        
+        let request = new XMLHttpRequest();
+        request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/customer?Name=${encodeURIComponent(toSearch)}`);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.setRequestHeader('api-auth-accountid', FIRST);
+        request.setRequestHeader('api-auth-applicationkey', SECOND);
+        request.onreadystatechange = function () {
+          if (this.readyState === 4) {
+            isSearching = false;
+            let cardElement = document.getElementById(randID);
+            if (this.status === 200) {
+              let response = JSON.parse(this.responseText);
+              if (response.Customers && response.Customers.length > 0) {
+                showCustomer(response.Customers[0], randID);
+              } else {
+                handleError(cardElement, "No customers found");
+              }
+            } else {
+              handleError(cardElement, "Error fetching customer details");
+            }
+          }
+        };
+        request.send();
+      }
+      
+      // Display customer
+      function showCustomer(customer, elementID) {
+        customerDetails[elementID] = customer;
+        
+        let cardElement = document.getElementById(elementID);
+        if (cardElement) {
+          cardElement.innerHTML = `
+            <div class="card-header customer">
+              <div>
+                <span class="card-title">${customer.Name}</span>
+                <span class="card-status">(${customer.Status})</span>
+              </div>
+              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
+            </div>
+            <div class="card-body">
+              <div class="grid-container">
+                <div><b>Email:</b> ${customer.Email || 'N/A'}</div>
+                <div><b>Phone:</b> ${customer.Phone || 'N/A'}</div>
+                <div><b>Currency:</b> ${customer.Currency || 'N/A'}</div>
+                <div><b>Pay Term:</b> ${customer.PaymentTerm || 'N/A'}</div>
+              </div>
+              <div class="action-buttons">
+                <a href="${CUSTOMER_RAW_URL}${customer.ID}" class="action-button" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
+                <button class="action-button" onclick="showCustomerDetails('${elementID}')"><i class="fa fa-list-alt"></i> Show Details</button>
+                <button class="action-button" onclick="getCustomerSales('${elementID}')"><i class="fa fa-history"></i> Order History</button>
+                <button class="action-button" onclick="createDraftToCustomer('${elementID}')"><i class="fa fa-envelope"></i> Create Draft</button>
+              </div>
+            </div>`;
+        }
+      }
+      
+      // Search for suppliers
+      function searchSupplier(toSearch) {
+        if (isSearching) return;
+        isSearching = true;
+        
+        const randID = Math.random().toString(16).substr(2, 8);
+        const resultsContainer = document.getElementById("SupplierSearchResults");
+        const cardHTML = `<div id="${randID}" class="card"><div class="card-header"><span class="card-title">${toSearch}</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="loading">Searching...</div></div></div>`;
+        resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+        
+        let request = new XMLHttpRequest();
+        request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/supplier?Name=${encodeURIComponent(toSearch)}`);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.setRequestHeader('api-auth-accountid', FIRST);
+        request.setRequestHeader('api-auth-applicationkey', SECOND);
+        request.onreadystatechange = function () {
+          if (this.readyState === 4) {
+            isSearching = false;
+            let cardElement = document.getElementById(randID);
+            if (this.status === 200) {
+              let response = JSON.parse(this.responseText);
+              if (response.Suppliers && response.Suppliers.length > 0) {
+                showSupplier(response.Suppliers[0], randID);
+              } else {
+                handleError(cardElement, "No suppliers found");
+              }
+            } else {
+              handleError(cardElement, "Error fetching supplier details");
+            }
+          }
+        };
+        request.send();
+      }
+      
+      // Display supplier
+      function showSupplier(supplier, elementID) {
+        supplierDetails[elementID] = supplier;
+        
+        let cardElement = document.getElementById(elementID);
+        if (cardElement) {
+          cardElement.innerHTML = `
+            <div class="card-header purchase">
+              <div>
+                <span class="card-title">${supplier.Name}</span>
+                <span class="card-status">(${supplier.Status})</span>
+              </div>
+              <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
+            </div>
+            <div class="card-body">
+              <div class="grid-container">
+                <div><b>Email:</b> ${supplier.Email || 'N/A'}</div>
+                <div><b>Phone:</b> ${supplier.Phone || 'N/A'}</div>
+                <div><b>Currency:</b> ${supplier.Currency || 'N/A'}</div>
+                <div><b>Pay Term:</b> ${supplier.PaymentTerm || 'N/A'}</div>
+              </div>
+              <div class="action-buttons">
+                <a href="${SUPPLIER_RAW_URL}${supplier.ID}" class="action-button" target="_blank"><i class="fa fa-external-link"></i> View in DEAR</a>
+                <button class="action-button" onclick="showSupplierDetails('${elementID}')"><i class="fa fa-list-alt"></i> Show Details</button>
+                <button class="action-button" onclick="getSupplierPurchases('${elementID}')"><i class="fa fa-history"></i> Order History</button>
+                <button class="action-button" onclick="createDraftToSupplier('${elementID}')"><i class="fa fa-envelope"></i> Create Draft</button>
+              </div>
+            </div>`;
+        }
+      }
+      
+// Show order details
+function showOrderDetails(elementID) {
+  const data = orderDetails[elementID];
+  if (data) {
+    let html = '';
+    for (const key in data) {
+      if (typeof data[key] === 'object' && data[key] !== null) {
+        html += `<details>
+          <summary>${key}</summary>
+          <div style="padding-left: 20px;">
+            ${formatObjectForDisplay(data[key])}
+          </div>
+        </details>`;
+      } else {
+        html += `<div><strong>${key}:</strong> ${data[key]}</div>`;
+      }
+    }
+    openModal('genericModal', 'Order Details', html);
+  }
+}
 
-      // Autofocus search input
-      document.getElementById("OrderSearchBox").focus();
-    </script>
-  </body>
-</html>
+// Format object for display
+function formatObjectForDisplay(obj) {
+  let html = '';
+  if (Array.isArray(obj)) {
+    obj.forEach((item, index) => {
+      html += `<details>
+        <summary>Item ${index + 1}</summary>
+        <div style="padding-left: 20px;">
+          ${typeof item === 'object' ? formatObjectForDisplay(item) : item}
+        </div>
+      </details>`;
+    });
+  } else {
+    for (const key in obj) {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        html += `<details>
+          <summary>${key}</summary>
+          <div style="padding-left: 20px;">
+            ${formatObjectForDisplay(obj[key])}
+          </div>
+        </details>`;
+      } else {
+        html += `<div><strong>${key}:</strong> ${obj[key]}</div>`;
+      }
+    }
+  }
+  return html;
+}
+
+// Show attachments
+function showAttachments(elementID) {
+  const data = orderDetails[elementID];
+  if (data && data.Attachments && data.Attachments.length > 0) {
+    let html = data.Attachments.map(att => `
+      <div class="attachment-item">
+        <a href="${att.DownloadUrl}" target="_blank"><i class="fa fa-file"></i> ${decodeURI(att.FileName)}</a>
+      </div>
+    `).join('');
+    openModal('genericModal', 'Attachments', html);
+  } else {
+    openModal('genericModal', 'Attachments', '<div class="no-results">No attachments found</div>');
+  }
+}
+
+// Create draft email from order
+function createDraftFromOrder(elementID) {
+  const data = orderDetails[elementID];
+  if (data) {
+    let subject, body, email;
+    
+    if (data.Customer) { // Sale order
+      subject = `Re: Sale Order ${data.Order.SaleOrderNumber}`;
+      email = data.CustomerEmail || '';
+      body = `Dear ${data.Customer},\n\nRegarding your order ${data.Order.SaleOrderNumber} with a total of ${data.Order.Total} ${data.CustomerCurrency}.\n\nOrder Status: ${data.Status}\n\nPlease let me know if you have any questions.\n\nBest regards,`;
+    } else { // Purchase order
+      subject = `Re: Purchase Order ${data.OrderNumber}`;
+      email = data.SupplierEmail || '';
+      body = `Dear ${data.Supplier},\n\nRegarding purchase order ${data.OrderNumber} with a total of ${data.Order.Total} ${data.SupplierCurrency}.\n\nOrder Status: ${data.Status}\n\nPlease let me know if you have any questions.\n\nBest regards,`;
+    }
+    
+    Missive.compose({
+      subject: subject,
+      body: body,
+      to: email
+    }).then(() => {
+      // Draft created successfully
+    }).catch(error => {
+      openModal('genericModal', 'Error', `Failed to create draft: ${error.message}`);
+    });
+  }
+}
+
+// Load insights
+function loadInsights() {
+  // Get current date for date range
+  const today = new Date();
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  
+  const formattedFirstDay = firstDay.toISOString().split('T')[0];
+  const formattedLastDay = lastDay.toISOString().split('T')[0];
+  
+  // Fetch sale orders for the month
+  let request = new XMLHttpRequest();
+  request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/saleList?FromDate=${formattedFirstDay}&ToDate=${formattedLastDay}`);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('api-auth-accountid', FIRST);
+  request.setRequestHeader('api-auth-applicationkey', SECOND);
+  request.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      let response = JSON.parse(this.responseText);
+      if (response.SaleList) {
+        let totalSales = response.SaleList.reduce((sum, sale) => sum + (sale.Total || 0), 0);
+        document.getElementById('totalSales').textContent = totalSales.toFixed(2);
+        
+        // Calculate trend compared to last month (placeholder)
+        document.getElementById('salesTrend').innerHTML = '<i class="fa fa-arrow-up"></i> 5.2% from last month';
+      }
+    }
+  };
+  request.send();
+  
+  // Fetch purchase orders for the month
+  let purchaseRequest = new XMLHttpRequest();
+  purchaseRequest.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/purchaseList?FromDate=${formattedFirstDay}&ToDate=${formattedLastDay}`);
+  purchaseRequest.setRequestHeader('Content-Type', 'application/json');
+  purchaseRequest.setRequestHeader('api-auth-accountid', FIRST);
+  purchaseRequest.setRequestHeader('api-auth-applicationkey', SECOND);
+  purchaseRequest.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      let response = JSON.parse(this.responseText);
+      if (response.PurchaseList) {
+        let totalPurchases = response.PurchaseList.reduce((sum, purchase) => sum + (purchase.Total || 0), 0);
+        document.getElementById('totalPurchases').textContent = totalPurchases.toFixed(2);
+        
+        // Calculate trend compared to last month (placeholder)
+        document.getElementById('purchasesTrend').innerHTML = '<i class="fa fa-arrow-up"></i> 3.8% from last month';
+      }
+    }
+  };
+  purchaseRequest.send();
+  
+  // Get count of pending orders
+  let pendingRequest = new XMLHttpRequest();
+  pendingRequest.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/saleList?Status=Pending');
+  pendingRequest.setRequestHeader('Content-Type', 'application/json');
+  pendingRequest.setRequestHeader('api-auth-accountid', FIRST);
+  pendingRequest.setRequestHeader('api-auth-applicationkey', SECOND);
+  pendingRequest.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      let response = JSON.parse(this.responseText);
+      if (response.SaleList) {
+        document.getElementById('pendingOrdersCount').textContent = response.SaleList.length;
+      }
+    }
+  };
+  pendingRequest.send();
+  
+  // Placeholder for low stock items
+  document.getElementById('lowStockCount').textContent = '6';
+  
+  // Add event listeners for insight actions
+  document.getElementById('viewLowStock').onclick = function() {
+    switchTab('inventory');
+    // Additional logic to show low stock items
+  };
+  
+  document.getElementById('viewPendingOrders').onclick = function() {
+    switchTab('orders');
+    // Additional logic to show pending orders
+  };
+}
+
+// Search function with debounce
+function searchOrder(toSearch) {
+  if (isSearching) return;
+  isSearching = true;
+  toSearch = toSearch.trim().toUpperCase();
+  const randID = Math.random().toString(16).substr(2, 8);
+  const resultsContainer = document.getElementById("OrderSearchResults");
+  const cardHTML = `<div id="${randID}" class="card"><div class="card-header"><span class="card-title">${toSearch}</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="loading">Searching...</div></div></div>`;
+  resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+  
+  if (toSearch.startsWith('S')) {
+    DEAR_searchSale(toSearch, randID);
+  } else if (toSearch.startsWith('P')) {
+    DEAR_searchPurchase(toSearch, randID);
+  } else {
+    isSearching = false;
+    handleError(document.getElementById(randID), "Please start with 'S' for Sale or 'P' for Purchase");
+  }
+}
+
+// Debounce function
+function debounce(func, wait) {
+  return function(...args) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+// Event listeners for Missive integration
+Missive.on('change:conversations', (ids) => {
+  Missive.fetchConversations(ids).then((conversations) => {
+    if (conversations.length !== 1) return;
+    getBoth();
+    const subject = conversations[0].subject;
+    
+    // Display the subject
+    const subjectDisplayDiv = document.getElementById('subjectDisplay');
+    subjectDisplayDiv.textContent = subject;
+    
+    // Extract order numbers from subject
+    const orderPattern = /[SP]\d+G/g;
+    const orders = subject.match(orderPattern) || [];
+    const orderButtonsDiv = document.getElementById('orderButtons');
+    orderButtonsDiv.innerHTML = '';
+    
+    orders.forEach(order => {
+      const button = document.createElement('button');
+      button.className = 'order-button';
+      button.textContent = order;
+      button.onclick = () => searchOrder(order);
+      orderButtonsDiv.appendChild(button);
+    });
+    
+    // Extract customer/supplier names for quick search
+    const emails = conversations[0].aliases.map(alias => alias.email);
+    if (emails.length > 0) {
+      // Check if email matches any customer or supplier
+      setTimeout(() => {
+        checkEmailsForContacts(emails);
+      }, 500);
+    }
+  });
+});
+
+// Check if email matches any contacts in DEAR
+function checkEmailsForContacts(emails) {
+  if (!emails.length || !FIRST || !SECOND) return;
+  
+  const email = emails[0];
+  
+  // Search for customer with this email
+  let request = new XMLHttpRequest();
+  request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/customer?Email=${encodeURIComponent(email)}`);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('api-auth-accountid', FIRST);
+  request.setRequestHeader('api-auth-applicationkey', SECOND);
+  request.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      let response = JSON.parse(this.responseText);
+      if (response.Customers && response.Customers.length > 0) {
+        // Found a customer match
+        showCustomerMatch(response.Customers[0]);
+      } else {
+        // Try supplier search
+        checkSupplierMatch(email);
+      }
+    } else if (this.readyState === 4) {
+      // Try supplier search
+      checkSupplierMatch(email);
+    }
+  };
+  request.send();
+}
+
+// Check if email matches a supplier
+function checkSupplierMatch(email) {
+  let request = new XMLHttpRequest();
+  request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/supplier?Email=${encodeURIComponent(email)}`);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('api-auth-accountid', FIRST);
+  request.setRequestHeader('api-auth-applicationkey', SECOND);
+  request.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      let response = JSON.parse(this.responseText);
+      if (response.Suppliers && response.Suppliers.length > 0) {
+        // Found a supplier match
+        showSupplierMatch(response.Suppliers[0]);
+      }
+    }
+  };
+  request.send();
+}
+
+// Show customer match notification
+function showCustomerMatch(customer) {
+  const randID = Math.random().toString(16).substr(2, 8);
+  const resultsContainer = document.getElementById("CustomerSearchResults");
+  
+  // Create a special card for matched customer
+  let cardHTML = `
+    <div id="${randID}" class="card">
+      <div class="card-header customer">
+        <div>
+          <span class="card-title">Customer Match: ${customer.Name}</span>
+          <span class="card-status">(${customer.Status})</span>
+        </div>
+        <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
+      </div>
+      <div class="card-body">
+        <div><b>Found a matching customer in DEAR Systems</b></div>
+        <div class="grid-container">
+          <div><b>Email:</b> ${customer.Email || 'N/A'}</div>
+          <div><b>Phone:</b> ${customer.Phone || 'N/A'}</div>
+          <div><b>Currency:</b> ${customer.Currency || 'N/A'}</div>
+        </div>
+        <div class="action-buttons">
+          <button class="action-button" onclick="viewCustomerDetails('${customer.ID}')">
+            <i class="fa fa-user"></i> View Customer
+          </button>
+          <button class="action-button" onclick="switchTab('customers')">
+            <i class="fa fa-search"></i> Go to Customers Tab
+          </button>
+        </div>
+      </div>
+    </div>`;
+  
+  // Switch to customers tab and show the card
+  switchTab('customers');
+  resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+  customerDetails[randID] = customer;
+}
+
+// Show supplier match notification
+function showSupplierMatch(supplier) {
+  const randID = Math.random().toString(16).substr(2, 8);
+  const resultsContainer = document.getElementById("SupplierSearchResults");
+  
+  // Create a special card for matched supplier
+  let cardHTML = `
+    <div id="${randID}" class="card">
+      <div class="card-header purchase">
+        <div>
+          <span class="card-title">Supplier Match: ${supplier.Name}</span>
+          <span class="card-status">(${supplier.Status})</span>
+        </div>
+        <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
+      </div>
+      <div class="card-body">
+        <div><b>Found a matching supplier in DEAR Systems</b></div>
+        <div class="grid-container">
+          <div><b>Email:</b> ${supplier.Email || 'N/A'}</div>
+          <div><b>Phone:</b> ${supplier.Phone || 'N/A'}</div>
+          <div><b>Currency:</b> ${supplier.Currency || 'N/A'}</div>
+        </div>
+        <div class="action-buttons">
+          <button class="action-button" onclick="viewSupplierDetails('${supplier.ID}')">
+            <i class="fa fa-truck"></i> View Supplier
+          </button>
+          <button class="action-button" onclick="switchTab('suppliers')">
+            <i class="fa fa-search"></i> Go to Suppliers Tab
+          </button>
+        </div>
+      </div>
+    </div>`;
+  
+  // Switch to suppliers tab and show the card
+  switchTab('suppliers');
+  resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+  supplierDetails[randID] = supplier;
+}
+
+// Search function integration
+document.getElementById("OrderSearchButton").onclick = function() {
+  const searchValue = document.getElementById("OrderSearchBox").value;
+  if (searchValue) searchOrder(searchValue);
+};
+
+document.getElementById("ProductSearchButton").onclick = function() {
+  const searchValue = document.getElementById("ProductSearchBox").value;
+  if (searchValue) searchProduct(searchValue);
+};
+
+document.getElementById("CustomerSearchButton").onclick = function() {
+  const searchValue = document.getElementById("CustomerSearchBox").value;
+  if (searchValue) searchCustomer(searchValue);
+};
+
+document.getElementById("SupplierSearchButton").onclick = function() {
+  const searchValue = document.getElementById("SupplierSearchBox").value;
+  if (searchValue) searchSupplier(searchValue);
+};
+
+document.getElementById("InventorySearchButton").onclick = function() {
+  const searchValue = document.getElementById("InventorySearchBox").value;
+  if (searchValue) searchInventory(searchValue);
+};
+
+// Add keypress listeners for all search boxes
+document.getElementById("OrderSearchBox").addEventListener('keypress', debounce(function(e) {
+  if (e.key === 'Enter') {
+    const searchValue = this.value;
+    if (searchValue) searchOrder(searchValue);
+  }
+}, 300));
+
+document.getElementById("ProductSearchBox").addEventListener('keypress', debounce(function(e) {
+  if (e.key === 'Enter') {
+    const searchValue = this.value;
+    if (searchValue) searchProduct(searchValue);
+  }
+}, 300));
+
+document.getElementById("CustomerSearchBox").addEventListener('keypress', debounce(function(e) {
+  if (e.key === 'Enter') {
+    const searchValue = this.value;
+    if (searchValue) searchCustomer(searchValue);
+  }
+}, 300));
+
+document.getElementById("SupplierSearchBox").addEventListener('keypress', debounce(function(e) {
+  if (e.key === 'Enter') {
+    const searchValue = this.value;
+    if (searchValue) searchSupplier(searchValue);
+  }
+}, 300));
+
+document.getElementById("InventorySearchBox").addEventListener('keypress', debounce(function(e) {
+  if (e.key === 'Enter') {
+    const searchValue = this.value;
+    if (searchValue) searchInventory(searchValue);
+  }
+}, 300));
+
+// Inventory search function
+function searchInventory(toSearch) {
+  const randID = Math.random().toString(16).substr(2, 8);
+  const resultsContainer = document.getElementById("InventorySearchResults");
+  const cardHTML = `<div id="${randID}" class="card"><div class="card-header"><span class="card-title">Inventory: ${toSearch}</span><span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span></div><div class="card-body"><div class="loading">Searching inventory...</div></div></div>`;
+  resultsContainer.insertAdjacentHTML('beforeend', cardHTML);
+  
+  // Implement inventory search with DEAR API
+  let request = new XMLHttpRequest();
+  request.open('GET', `https://inventory.dearsystems.com/ExternalApi/v2/ref/productAvailability?ProductName=${encodeURIComponent(toSearch)}`);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('api-auth-accountid', FIRST);
+  request.setRequestHeader('api-auth-applicationkey', SECOND);
+  request.onreadystatechange = function () {
+    if (this.readyState === 4) {
+      let cardElement = document.getElementById(randID);
+      if (this.status === 200) {
+        let response = JSON.parse(this.responseText);
+        if (response.ProductAvailabilityList && response.ProductAvailabilityList.length > 0) {
+          showInventoryResults(response.ProductAvailabilityList, randID);
+        } else {
+          handleError(cardElement, "No inventory data found for the search term");
+        }
+      } else {
+        handleError(cardElement, "Error fetching inventory data");
+      }
+    }
+  };
+  request.send();
+}
+
+// Display inventory results
+function showInventoryResults(inventoryData, elementID) {
+  let cardElement = document.getElementById(elementID);
+  if (!cardElement) return;
+  
+  let inventoryHtml = '';
+  inventoryData.forEach(item => {
+    inventoryHtml += `
+      <div class="card">
+        <div class="card-header product">
+          <div>
+            <span class="card-title">${item.ProductName}</span>
+            <span class="card-status">(SKU: ${item.SKU})</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="grid-container">
+            <div><b>Available:</b> ${item.Available}</div>
+            <div><b>On Hand:</b> ${item.OnHand}</div>
+            <div><b>Allocated:</b> ${item.Allocated}</div>
+            <div><b>Location:</b> ${item.Location || 'N/A'}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  cardElement.innerHTML = `
+    <div class="card-header">
+      <div>
+        <span class="card-title">Inventory Results</span>
+        <span class="card-status">(${inventoryData.length} items)</span>
+      </div>
+      <span class="close-button fa fa-times" onclick="closeThis(this)" aria-label="Close"></span>
+    </div>
+    <div class="card-body">
+      ${inventoryHtml}
+    </div>`;
+}
+
+// Initialize the app
+function init() {
+  getBoth();
+  document.getElementById("OrderSearchBox").focus();
+}
+
+// Call init when the app loads
+init();
