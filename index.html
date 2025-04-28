@@ -57,7 +57,7 @@
         background-color: white;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 12px;
+        margin-bottom: 16px; /* Increased margin for clearer separation */
         padding: 12px;
         transition: transform 0.2s, box-shadow 0.2s;
       }
@@ -155,6 +155,7 @@
       let FIRST = "";
       let SECOND = "";
       let SALE_RAW_URL = "https://inventory.dearsystems.com/Sale#";
+      let isSearching = false; // Prevent multiple simultaneous searches
 
       // Key retrieval functions
       function getFirst() {
@@ -199,7 +200,10 @@
               ${invoices ? `<div class="invoice-section">${invoices}</div>` : ''}
             </div>
           </div>`;
-        document.getElementById(elementID).innerHTML = toAppend;
+        let cardElement = document.getElementById(elementID);
+        if (cardElement) {
+          cardElement.outerHTML = toAppend; // Replace entire card to ensure no leftover content
+        }
       }
 
       // Close result card
@@ -209,8 +213,10 @@
 
       // DEAR Systems API call to search sale
       function DEAR_searchSale(toSearch) {
+        if (isSearching) return; // Prevent multiple searches
+        isSearching = true;
+        
         let request = new XMLHttpRequest();
-       		// Send request
         request.open('GET', 'https://inventory.dearsystems.com/ExternalApi/v2/saleList?Search=' + toSearch);
         request.setRequestHeader('Content-Type', 'application/json');
         request.setRequestHeader('api-auth-accountid', FIRST);
@@ -219,13 +225,24 @@
         let toAppend = `<div id="${randID}" class="sale-card"><div class="sale-header"><span class="sale-title">${toSearch}</span><span class="sale-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="sale-details"><div class="loading">Searching...</div></div></div>`;
         document.getElementById("SaleSearchResults").innerHTML += toAppend;
         request.onreadystatechange = function () {
-          if (this.readyState === 4 && this.status === 200) {
-            let SO = JSON.parse(this.responseText);
-            if (SO.SaleList.length > 0) {
-              let SOID = SO.SaleList[0].SaleID;
-              DEAR_getSale(SOID, randID);
+          if (this.readyState === 4) {
+            isSearching = false; // Reset search flag
+            if (this.status === 200) {
+              let SO = JSON.parse(this.responseText);
+              if (SO.SaleList.length > 0) {
+                let SOID = SO.SaleList[0].SaleID;
+                DEAR_getSale(SOID, randID);
+              } else {
+                let cardElement = document.getElementById(randID);
+                if (cardElement) {
+                  cardElement.innerHTML = `<div class="sale-header"><span class="sale-title">${toSearch}</span><span class="sale-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="sale-details"><div class="no-results">No sale order found</div></div>`;
+                }
+              }
             } else {
-              document.getElementById(randID).innerHTML = `<div class="sale-header"><span class="sale-title">${toSearch}</span><span class="sale-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="sale-details"><div class="no-results">No sale order found</div></div>`;
+              let cardElement = document.getElementById(randID);
+              if (cardElement) {
+                cardElement.innerHTML = `<div class="sale-header"><span class="sale-title">${toSearch}</span><span class="sale-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="sale-details"><div class="no-results">Error fetching sale order</div></div>`;
+              }
             }
           }
         };
@@ -243,6 +260,11 @@
           if (this.readyState === 4 && this.status === 200) {
             let Sale = JSON.parse(this.responseText);
             showSale(Sale, eleID);
+          } else if (this.readyState === 4) {
+            let cardElement = document.getElementById(eleID);
+            if (cardElement) {
+              cardElement.innerHTML = `<div class="sale-header"><span class="sale-title">Error</span><span class="sale-status"></span><span class="close-button fa fa-times" onclick="closeThis(this)"></span></div><div class="sale-details"><div class="no-results">Error fetching sale details</div></div>`;
+            }
           }
         };
         request.send();
