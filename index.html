@@ -203,18 +203,27 @@
         color: white;
         text-decoration: none;
         cursor: pointer;
-        background: #009688;
         border: none;
         border-radius: 4px;
         font-size: 12px;
         padding: 5px 10px;
-        display: flex;
+        flex: 1;
+        text-align: center;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
       }
+      .view-button-primary {
+        background: #009688;
+      }
+      .view-button-secondary {
+        background: #00796b;
+      }
+      .view-button-tertiary {
+        background: #00695c;
+      }
       .view-link a:hover, .view-link button:hover, .view-link span:hover {
-        background-color: #00796b;
-        text-decoration: none;
+        opacity: 0.9;
       }
       #orderPopup {
         display: none;
@@ -396,7 +405,7 @@
           </div>
         `).join('');
         
-        let attachmentsButton = sale.Attachments && sale.Attachments.length > 0 ? `<span class="attachments-button fa fa-paperclip" onclick="showAttachmentsPopup('${elementID}')" aria-label="View attachments"></span>` : '';
+        let attachmentsButton = sale.Attachments && sale.Attachments.length > 0 ? `<span class="attachments-button fa fa-paperclip view-button-tertiary" onclick="showAttachmentsPopup('${elementID}')" aria-label="View attachments">Attachments</span>` : '';
         
         let cardElement = document.getElementById(elementID);
         if (cardElement) {
@@ -415,8 +424,8 @@
               <div><b>Quote:</b> ${sale.Quote.Status}</div>
               ${invoices ? `<div class="invoice-section">${invoices}</div>` : ''}
               <div class="view-link">
-                <a href="${SALE_RAW_URL}${sale.ID}" target="_blank">View in DEAR</a>
-                <button onclick="showPopup('${elementID}')" aria-label="Show order details">Show Order Details</button>
+                <a href="${SALE_RAW_URL}${sale.ID}" class="view-button-primary" target="_blank">View in DEAR</a>
+                <button onclick="showPopup('${elementID}')" class="view-button-secondary" aria-label="Show order details">Show Details</button>
                 ${attachmentsButton}
               </div>
             </div>`;
@@ -426,7 +435,7 @@
       // Display purchase order
       function showPurchase(purchase, elementID) {
         orderDetails[elementID] = purchase;
-        let attachmentsButton = purchase.Attachments && purchase.Attachments.length > 0 ? `<span class="attachments-button fa fa-paperclip" onclick="showAttachmentsPopup('${elementID}')" aria-label="View attachments"></span>` : '';
+        let attachmentsButton = purchase.Attachments && purchase.Attachments.length > 0 ? `<span class="attachments-button fa fa-paperclip view-button-tertiary" onclick="showAttachmentsPopup('${elementID}')" aria-label="View attachments">Attachments</span>` : '';
         
         let cardElement = document.getElementById(elementID);
         if (cardElement) {
@@ -444,8 +453,8 @@
               <div><b>Total:</b> ${purchase.Order.Total} ${purchase.SupplierCurrency}</div>
               ${purchase.Type === "Advanced Purchase" ? `<div><b>Type:</b> ${purchase.Type}</div>` : ''}
               <div class="view-link">
-                <a href="${PURCHASE_RAW_URL}${purchase.ID}" target="_blank">View in DEAR</a>
-                <button onclick="showPopup('${elementID}')" aria-label="Show order details">Show Order Details</button>
+                <a href="${PURCHASE_RAW_URL}${purchase.ID}" class="view-button-primary" target="_blank">View in DEAR</a>
+                <button onclick="showPopup('${elementID}')" class="view-button-secondary" aria-label="Show order details">Show Details</button>
                 ${attachmentsButton}
               </div>
             </div>`;
