@@ -16,6 +16,22 @@
         background-color: #f8f9fa;
         user-select: text;
       }
+      #orderButtons {
+        margin-bottom: 10px;
+      }
+      .order-button {
+        margin-right: 5px;
+        padding: 5px 10px;
+        background-color: #009688;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .order-button:hover {
+        background-color: #00796b;
+      }
       .search-container {
         position: relative;
         margin-bottom: 12px;
@@ -180,6 +196,7 @@
     </style>
   </head>
   <body>
+    <div id="orderButtons"></div>
     <div class="search-container">
       <input id="OrderSearchBox" class="search-box" placeholder="Search Sale (S...) or Purchase (P...) Order" autocorrect="off" autocomplete="off" type="search" name="order" aria-label="Search for sale or purchase order">
       <span class="clear-button fa fa-times" onclick="clearSearch()" aria-label="Clear search"></span>
@@ -437,6 +454,18 @@
         Missive.fetchConversations(ids).then((conversations) => {
           if (conversations.length !== 1) return;
           getBoth();
+          const subject = conversations[0].subject;
+          const orderPattern = /[SP]\d+G/g;
+          const orders = subject.match(orderPattern) || [];
+          const orderButtonsDiv = document.getElementById('orderButtons');
+          orderButtonsDiv.innerHTML = '';
+          orders.forEach(order => {
+            const button = document.createElement('button');
+            button.className = 'order-button';
+            button.textContent = order;
+            button.onclick = () => searchOrder(order);
+            orderButtonsDiv.appendChild(button);
+          });
         });
       });
 
